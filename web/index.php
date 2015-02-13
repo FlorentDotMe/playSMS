@@ -95,7 +95,12 @@ if (_APP_) {
 		}
 		header("Location: "._u('index.php?app=main'.$query_string));
 	} else {
-		header("Location: "._u('index.php?app=main&inc=core_auth&route=login'));
+		if ($core_config['main']['default_login']) {
+			$query_string .= '&inc=core_auth&route='.$core_config['main']['default_login'];
+		} else {
+			$query_string .= '&inc=core_auth&route=login';
+		}
+		header("Location: "._u('index.php?app=main'.$query_string));
 	}
 	exit();
 }

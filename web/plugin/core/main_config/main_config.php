@@ -110,6 +110,12 @@ switch (_OP_) {
 			_('no') => 0,
 		) , $main_config['plus_sign_add']);
 		
+		// select default route
+                $option_login_list = _options(array(
+                        'login',
+                        'token',
+                ) , $main_config['default_login']);
+
 		// display
 		
 		if ($err = $_SESSION['error_string']) {
@@ -136,6 +142,7 @@ switch (_OP_) {
 				'Default sender ID' => _('Default sender ID') ,
 				'Default timezone' => _('Default timezone') ,
 				'Default SMS rate' => _('Default SMS rate') ,
+				'Login method' => _('Login method') ,
 				'Maximum SMS count' => _('Maximum SMS count') ,
 				'Default credit for user' => _('Default credit for user') ,
 				'Always remove plus sign' => _('Always remove plus sign') ,
@@ -184,7 +191,8 @@ switch (_OP_) {
 				'option_themes_module' => $option_themes_module,
 				'option_language_module' => $option_language_module,
 				'option_plus_sign_remove' => $option_plus_sign_remove,
-				'option_plus_sign_add' => $option_plus_sign_add
+				'option_plus_sign_add' => $option_plus_sign_add,
+				'option_login_list' => $option_login_list
 			) ,
 			'injects' => array(
 				'core_config',
@@ -247,6 +255,7 @@ switch (_OP_) {
 			'default_rate' => (float)$post['edit_default_rate'],
 			'gateway_module' => ($post['edit_gateway_module'] ? $post['edit_gateway_module'] : 'dev') ,
 			'themes_module' => ($post['edit_themes_module'] ? $post['edit_themes_module'] : 'default') ,
+			'default_login' => ($post['edit_default_login'] ? $post['edit_default_login'] : 'login'),
 			'language_module' => ($post['edit_language_module'] ? $post['edit_language_module'] : 'en_US') ,
 			'sms_max_count' => (int)($post['edit_sms_max_count'] > 1 ? $post['edit_sms_max_count'] : 1) ,
 			'plus_sign_remove' => (int)$post['edit_plus_sign_remove'],
