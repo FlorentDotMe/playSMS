@@ -322,6 +322,9 @@ table.sortable thead, table.sortable th {
 	-moz-hyphens: auto;
         hyphens: auto;
 }
+#user_inbox_msg:empty {
+    display: none;
+}
 
 #user_incoming_msg {
 	padding-right: 2px;

@@ -67,6 +67,11 @@ $menu_config[$menutab][] = array(
 	1
 );
 $menu_config[$menutab][] = array(
+	'index.php?app=main&inc=feature_report&route=user_conversation&op=user_conversation',
+	_('Conversation') ,
+	1
+);
+$menu_config[$menutab][] = array(
 	'index.php?app=main&inc=feature_report&route=user_incoming&op=user_incoming',
 	_('Incoming messages') ,
 	1
