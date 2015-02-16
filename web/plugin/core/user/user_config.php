@@ -246,6 +246,7 @@ switch (_OP_) {
 			'fwd_to_mobile',
 			'local_length',
 			'replace_zero',
+			'token',
 			'new_token',
 			'enable_webservices',
 			'webservices_ip',
@@ -265,8 +266,8 @@ switch (_OP_) {
 		if ($up['username'] = $c_username) {
 			$continue = true;
 			if ($up['new_token']) {
-				$up['token'] = md5(mktime() . $c_username . $up['email']);
-			}
+                $up['token'] = md5(mktime() . $c_username . $up['email']);
+            }
 			unset($up['new_token']);
 			if ($continue) {
 				if (dba_update(_DB_PREF_ . '_tblUser', $up, array(
