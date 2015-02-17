@@ -17,14 +17,15 @@
 	<thead>
 		<tr>
 			<th width=5%><input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)></th>
-			<th width=30%>{{ Message in }}</th>
 			<th width=30%>{{ Message out }}</th>
+			<th width=30%>{{ Message in }}</th>
 			<th width=15%>{{ Recipient }}</th>
 		</tr>
 	</thead>
 	<tbody>
 		<loop.data>
-            <tr class={{ data.tr_class }}>
+            {{ data.header }}
+            <tr {{ data.tr_attr }}>
                 <td>
                     <input type=hidden name=itemid{{ data.j }} value={{ data.id }}>
                     <input type=checkbox name=checkid{{ data.j }}>

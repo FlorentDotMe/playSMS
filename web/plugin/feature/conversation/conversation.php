@@ -56,7 +56,7 @@ $db_query = "(
                 WHERE
                     tblIn.flag_deleted = 0
                     AND tblIn.in_uid = " . $user_config['uid'] . "
-             ) ORDER BY sender, datetime";
+             ) ORDER BY datetime DESC";
 
 $db_result = @dba_query($db_query);
 while ($db_row = dba_fetch_array($db_result)) {
@@ -118,16 +118,18 @@ for ($j = 0; $j < count($list); $j++) {
             $forward_out = $forward;
         }
     }
-    if (!in_array($sender, $list_sender)) {
-        $list_sender[] = $sender;
-        $table_class = '';
-    } else {
-        $table_class = $sender;
-    }
+#    if (!in_array($sender, $list_sender)) {
+#        $list_sender[] = $sender;
+#        $header = '<tr data-toggle="collapse" data-target=".collapse' . count($list_sender) . '" class="accordion-toggle text-center warning"><td colspan="4">' . $current_sender . '</td></tr>';
+#        $footer = '';
+#    } else {
+#        $header = '';
+#        $footer = '';
+#    }
 
-    $data = array(
-        'tr_class' => $tr_class,
-        'table_class' => $table_class,
+    $data[$sender][] = array(
+        'header' => $header,
+        'tr_attr' => $tr_attr,
         'current_sender' => $current_sender,
         'msg_in' => $msg_in,
         'msg_out' => $msg_out,
@@ -143,7 +145,25 @@ for ($j = 0; $j < count($list); $j++) {
         'j' => $j
     );
 
-    $tpl['loops']['data'][] = $data;
+}
+
+$m = 0;
+$l = 0;
+foreach ( $data as $sdata ) {
+    $m = 0;
+    $l++;
+    foreach ( $sdata as $cell ) {
+        $tr_attr = 'class="collapse' . $l . ' collapse accordion-body"';
+        if ($m == 0) {
+            $m++;
+            $header = '<tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning"><td colspan="4">' . $cell['current_sender'] . '</td></tr>';
+        } else {
+            $header = '';
+        }
+        $cell['header'] = $header;
+        $cell['tr_attr'] = $tr_attr;
+        $tpl['loops']['data'][] = $cell;
+    }
 }
 
 
