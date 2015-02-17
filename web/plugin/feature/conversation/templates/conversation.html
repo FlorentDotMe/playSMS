@@ -1,0 +1,49 @@
+{{ ERROR }}
+<h2>{{ Conversations }}</h2>
+<p>{{ SEARCH_FORM }}</p>
+<form id="fm_conversation" name="fm_conversation" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
+{{ CSRF_FORM }}
+<input type=hidden name=go value="delete">
+<div class=actions_box>
+	<div class=pull-left>
+		<a href="index.php?app=main&inc=conversation&op=actions&go=export">{{ Export }}</a>
+		<a href='#' onClick="return SubmitConfirm('{{ ARE_YOU_SURE }}', 'fm_conversation');">{{ Delete }}</a>
+	</div>
+	<div class="pull-right">
+	</div>
+</div>
+<div class=table-responsive>
+<table class=playsms-table-list>
+	<thead>
+		<tr>
+			<th width=5%><input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)></th>
+			<th width=30%>{{ Message in }}</th>
+			<th width=30%>{{ Message out }}</th>
+			<th width=15%>{{ Recipient }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<loop.data>
+            <tr class={{ data.tr_class }}>
+                <td>
+                    <input type=hidden name=itemid{{ data.j }} value={{ data.id }}>
+                    <input type=checkbox name=checkid{{ data.j }}>
+                </td>
+                <td>
+                    <div id="user_inbox_msg">{{ data.msg_out }}</div>
+                    <div id="msg_label">{{ data.datetime_out }}&nbsp;{{ data.status_out }}</div>
+                    <div id="msg_option">{{ data.reply_out }}&nbsp{{ data.forward_out }}</div>
+                </td>
+                <td>
+                    <div id="user_inbox_msg">{{ data.msg_in }}</div>
+                    <div id="msg_label">{{ data.datetime_in }}&nbsp;{{ data.status_in }}</div>
+                    <div id="msg_option">{{ data.reply_in }}&nbsp{{ data.forward_in }}</div>
+                </td>
+                <td>{{ data.current_sender }}</td>
+            </tr>
+		</loop.data>
+	</tbody>
+</table>
+</div>
+<div class=pull-right>{{ NAV_FORM }}</div>
+</form>
