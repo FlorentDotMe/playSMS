@@ -36,6 +36,7 @@ $db_query = "(
                 SELECT 
                     tblOut.id AS id,
                     tblOut.p_datetime AS datetime,
+                    tblOut.p_status AS status,
                     tblOut.p_dst AS sender,
                     tblOut.p_msg AS message_out,
                     '' AS message_in
@@ -48,6 +49,7 @@ $db_query = "(
                 SELECT
                     tblIn.in_id AS id,
                     tblIn.in_datetime AS datetime,
+                    tblIn.in_status AS status,
                     tblIn.in_sender AS sender,
                     '' AS message_out,
                     tblIn.in_message AS message_in
@@ -80,93 +82,104 @@ $tpl = array(
 
 $i = $nav['top'];
 $j = 0;
-$k = 0;
 $list_sender = array();
 $flag_section = false;
 for ($j = 0; $j < count($list); $j++) {
     $list[$j] = core_display_data($list[$j]);
     $id = $list[$j]['id'];
     $sender = $list[$j]['sender'];
-    $p_desc = phonebook_number2name($sender);
+    $desc = phonebook_number2name($sender);
     $current_sender = $sender;
-    if ($p_desc) {
-        $current_sender = "$sender<br />$p_desc";
+    if ($desc) {
+        $current_sender = "$sender<br />$desc";
     }
     $datetime = core_display_datetime($list[$j]['datetime']);
     $msg_in = core_display_text($list[$j]['message_in']);
     $msg_out = core_display_text($list[$j]['message_out']);
-    $msg = $msg_in.$msg_out;
-    $reply = '';
-    $forward = '';
-    if ( $msg && $sender) {
-        $reply = _a('index.php?app=main&inc=core_sendsms&op=sendsms&do=reply&message=' . urlencode($msg) . '&to=' . urlencode($sender) , $icon_config['reply']);
-        $forward = _a('index.php?app=main&inc=core_sendsms&op=sendsms&do=forward&message=' . urlencode($msg) , $icon_config['forward']);
+    $status = $list[$j]['status'];
+
+    // 0 = pending
+    // 1 = sent
+    // 2 = failed
+    // 3 = delivered
+    if ($status == "1") {
+        $status = "<span class=status_sent />";
+    } else if ($status == "2") {
+        $status = "<span class=status_failed />";
+    } else if ($status == "3") {
+        $status = "<span class=status_delivered />";
+    } else {
+        $status = "<span class=status_pending />";
     }
+    $status = strtolower($status);
+
     $i--;
-    $datetime_in = $satus_in = $reply_in = $forward_in = '';
-    $datetime_out = $satus_out = $reply_out = $forward_out = '';
+    $datetime_in = $status_in = '';
+    $datetime_out = $status_out = '';
     if ( $msg_in != '' ) {
         $datetime_in = $datetime;
-        $satus_in = $status;
-        $reply_in = $reply;
-        $forward_in = $forward;
+        $status_in = $status;
     } else {
         if ( $msg_out != '' ) {
             $datetime_out = $datetime;
-            $satus_out = $status;
-            $reply_out = $reply;
-            $forward_out = $forward;
+            $status_out = $status;
         }
     }
-#    if (!in_array($sender, $list_sender)) {
-#        $list_sender[] = $sender;
-#        $header = '<tr data-toggle="collapse" data-target=".collapse' . count($list_sender) . '" class="accordion-toggle text-center warning"><td colspan="4">' . $current_sender . '</td></tr>';
-#        $footer = '';
-#    } else {
-#        $header = '';
-#        $footer = '';
-#    }
 
+    // Data queue for template
     $data[$sender][] = array(
         'header' => $header,
         'tr_attr' => $tr_attr,
         'current_sender' => $current_sender,
+        'sender' => $sender,
         'msg_in' => $msg_in,
         'msg_out' => $msg_out,
         'datetime_in' => $datetime_in,
         'datetime_out' => $datetime_out,
         'status_in' => $status_in,
         'status_out' => $status_out,
-        'reply_in' => $reply_in,
-        'reply_out' => $reply_out,
-        'forward_in' => $forward_in,
-        'forward_out' => $forward_out,
         'id' => $id,
         'j' => $j
     );
-
 }
 
+// Message counter
 $m = 0;
+// Conversation counter
 $l = 0;
+
 foreach ( $data as $sdata ) {
+    // Reset message counter
     $m = 0;
+    // Increase conversation counter
     $l++;
+
     foreach ( $sdata as $cell ) {
-        $tr_attr = 'class="collapse' . $l . ' collapse accordion-body"';
+        // Insert the collapse control header for each conversation
         if ($m == 0) {
             $m++;
-            $header = '<tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning"><td colspan="4">' . $cell['current_sender'] . '</td></tr>';
+            // Format reply button
+            $reply = _a('index.php?app=main&inc=core_sendsms&op=sendsms&do=reply&to=' . urlencode($cell['sender']) , $icon_config['reply']);
+            // Format conversation header
+            $header = '
+                <tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning">
+                    <td colspan="4">' . $cell['current_sender'] . ' ' . $reply . '</td>
+                </tr>';
         } else {
+            // Empty conversation header if not the first message
             $header = '';
         }
+        // Set attributes for messages of each conversation
+        $tr_attr = 'class="collapse' . $l . ' collapse accordion-body"';
+        // Update dynamic fields
         $cell['header'] = $header;
         $cell['tr_attr'] = $tr_attr;
+        // Push in the queue
         $tpl['loops']['data'][] = $cell;
     }
 }
 
-
+// Manage errors
 $error_content = '';
 if ($err = $_SESSION['error_string']) {
     $error_content = "<div class=error_string>$err</div>";
