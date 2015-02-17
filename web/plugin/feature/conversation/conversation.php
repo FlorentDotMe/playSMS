@@ -25,12 +25,11 @@ if (!auth_isvalid()) {
 
 $base_url = 'index.php?app=main&inc=feature_conversation&route=conversation&op=conversation';
 
-#################
-# MySQL Query
-# Expected output
-#+----+----------+--------+-------------+------------+
-#| id | datetime | sender | message_out | message_in |
-#+----+----------+--------+-------------+------------+
+// MySQL Query
+// Expected output
+//+----+----------+--------+-------------+------------+
+//| id | datetime | sender | message_out | message_in |
+//+----+----------+--------+-------------+------------+
 
 $db_query = "(  
                 SELECT 
@@ -74,8 +73,8 @@ $tpl = array(
         'Delete' => $icon_config['delete'],
         'Me' => _('Me'),
         'Recipient' => _('Recipient'),
-        'Message in' => _('Message in'),
-        'Message out' => _('Message out'),
+        'Message in' => _('Received'),
+        'Message out' => _('Sent'),
         'ARE_YOU_SURE' => _('Are you sure you want to delete these items ?')
     )
 );
@@ -118,7 +117,8 @@ for ($j = 0; $j < count($list); $j++) {
     $datetime_out = $status_out = '';
     if ( $msg_in != '' ) {
         $datetime_in = $datetime;
-        $status_in = $status;
+        // Not required
+        //$status_in = $status;
     } else {
         if ( $msg_out != '' ) {
             $datetime_out = $datetime;
@@ -163,7 +163,7 @@ foreach ( $data as $sdata ) {
             // Format conversation header
             $header = '
                 <tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning">
-                    <td colspan="4">' . $cell['current_sender'] . ' ' . $reply . '</td>
+                    <td colspan="4"><b>' . $cell['sender'] . '</b> ' . $reply . ' (Last update: ' . $cell['datetime_in'] . $cell['datetime_out'] . ')</td>
                 </tr>';
         } else {
             // Empty conversation header if not the first message

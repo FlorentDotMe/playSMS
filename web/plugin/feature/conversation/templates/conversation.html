@@ -17,9 +17,8 @@
 	<thead>
 		<tr>
 			<th width=5%><input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)></th>
-			<th width=30%>{{ Message out }}</th>
-			<th width=30%>{{ Message in }}</th>
-			<th width=15%>{{ Recipient }}</th>
+			<th width=30% class="text-center">{{ Message out }}</th>
+			<th width=30% class="text-center">{{ Message in }}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -38,7 +37,6 @@
                     <div id="user_inbox_msg">{{ data.msg_in }}</div>
                     <div id="msg_label">{{ data.datetime_in }}&nbsp;{{ data.status_in }}</div>
                 </td>
-                <td>{{ data.current_sender }}</td>
             </tr>
 		</loop.data>
 	</tbody>
