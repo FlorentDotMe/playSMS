@@ -49,6 +49,7 @@
     function replyto(event,recipient){
         $("#msg_combo_sendto").select2("val", [recipient]);
         event.stopPropagation();
+        $("#message").focus();
     }
 </script>
 {{ ERROR }}
@@ -100,7 +101,11 @@
                 <a href="#" onClick="return SubmitConfirm('{{ ARE_YOU_SURE }}', 'fm_conversation');">{{ Delete }}</a>
             </th>
 			<th width=30% class="text-center">{{ Message out }}</th>
-			<th width=30% class="text-center">{{ Message in }}</th>
+			<th width=30% class="text-center">{{ Message in }}
+                <div class=pull-right>
+                    <a href="#" onclick="window.location.reload(true);" class="playsms-icon glyphicon glyphicon-refresh" alt="Refresh" title="Refresh"></a>
+                </div>
+            </th>
 		</tr>
 	</thead>
 	<tbody>

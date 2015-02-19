@@ -196,7 +196,7 @@ switch (_OP_) {
                 if ($m == 0) {
                     $m++;
                     // Format reply button
-                    $reply = '<a onclick="replyto(event,\'' . $cell['sender'] . '\');">' . $icon_config['reply'] . '</a>';
+                    $reply = '<a href="#top" onclick="replyto(event,\'' . $cell['sender'] . '\');">' . $icon_config['reply'] . '</a>';
                     // Format conversation header
                     $header = '
                         <tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning">
