@@ -121,11 +121,6 @@ switch (_OP_) {
             $list[$j] = core_display_data($list[$j]);
             $id = $list[$j]['id'];
             $sender = $list[$j]['sender'];
-            $desc = phonebook_number2name($sender);
-            $current_sender = $sender;
-            if ($desc) {
-                $current_sender = "$sender<br />$desc";
-            }
             $datetime = core_display_datetime($list[$j]['datetime']);
             $msg_in = core_display_text($list[$j]['message_in']);
             $msg_out = core_display_text($list[$j]['message_out']);
@@ -166,7 +161,6 @@ switch (_OP_) {
             $data[$sender][] = array(
                 'header' => $header,
                 'tr_attr' => $tr_attr,
-                'current_sender' => $current_sender,
                 'sender' => $sender,
                 'msg_in' => $msg_in,
                 'msg_out' => $msg_out,
