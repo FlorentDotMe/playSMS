@@ -1,22 +1,104 @@
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery/jquery-2.0.3.min.js"></script>
+<link rel="stylesheet"
+    href="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.css" />
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#msg_combo_sendto").select2({
+            multiple: true,
+            /* placeholder: " Send to ", */
+            allowClear: true,
+            minimumInputLength: 2,
+            separator: ",",
+            tokenSeparators: [","],
+            initSelection : function (element, callback) {
+                var data = [];
+                $(element.val().split(",")).each(function () {
+                    data.push({id: this, text: this});
+                });
+                callback(data);
+            },
+            createSearchChoice: function(term, data) {
+                if ($(data).filter(function () {
+                    return this.text.localeCompare(term)===0;
+                }).length===0) {
+                    return {id:term, text:term};
+                }
+            },
+            ajax: {
+                url: "{{ HTTP_PATH_BASE }}",
+                dataType: 'json',
+                quietMillis: 100,
+                data: function (term, page) {
+                    return {
+                        app: "webservices",
+                        op: "phonebook",
+                        keyword: term
+                    };
+                },
+                results: function (data, page) {
+                    return {results: data};
+                }
+            }
+        });
+        $("#message").focus();
+    });
+
+    function replyto(event,recipient){
+        $("#msg_combo_sendto").select2("val", [recipient]);
+        event.stopPropagation();
+    }
+</script>
 {{ ERROR }}
 <h2>{{ Conversations }}</h2>
-<p>{{ SEARCH_FORM }}</p>
+<form id="fm_sendsms" name="fm_sendsms" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
+{{ CSRF_FORM }}
+<input type=hidden name='go' value='sendsms'>
+<input type=hidden value="{{ MAX_SMS_LENGTH }}" name="hiddcount" id="hiddcount"> 
+<input type=hidden value="{{ MAX_SMS_LENGTH_UNICODE }}" name="hiddcount_unicode" id="hiddcount_unicode">
+<div class="newsms accordion-body col-sm-4">
+    <div class="form-group">
+        <label for="msg_combo_sendto">{{ Send to }}</label>
+        <p>
+            <input type="hidden" name="p_num_text" id=msg_combo_sendto
+                style="width: 100%" value="{{ to }}">
+        </p>
+    </div>
+    <div class="form-group">
+        <label for="message">{{ Message }}</label>
+        <p>
+            <textarea name="message" id=message style="width: 100%"
+                onFocus="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onClick="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onkeypress="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onblur="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onKeyUp="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"></textarea>
+        </p>
+        <p>
+            <input type="text" id='txtcount' name="txtcount" style="width: 100%"
+                value="0 char : 0 SMS" size="17"
+                onFocus="document.fm_conversation.message.focus();" readonly>
+        </p>
+    </div>
+    <div class="form-group">
+        <input type=submit class=button value='{{ Send }}'>
+    </div>
+</div>
+</form>
+
 <form id="fm_conversation" name="fm_conversation" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
 {{ CSRF_FORM }}
 <input type=hidden name=go value="delete">
-<div class=actions_box>
-	<div class=pull-left>
-		<a href="index.php?app=main&inc=conversation&op=actions&go=export">{{ Export }}</a>
-		<a href='#' onClick="return SubmitConfirm('{{ ARE_YOU_SURE }}', 'fm_conversation');">{{ Delete }}</a>
-	</div>
-	<div class="pull-right">
-	</div>
-</div>
-<div class=table-responsive>
+<div class="table-responsive">
 <table class=playsms-table-list>
 	<thead>
 		<tr>
-			<th width=5%><input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)></th>
+			<th width=5%>
+                <input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)>
+                <a href="#" onClick="return SubmitConfirm('{{ ARE_YOU_SURE }}', 'fm_conversation');">{{ Delete }}</a>
+            </th>
 			<th width=30% class="text-center">{{ Message out }}</th>
 			<th width=30% class="text-center">{{ Message in }}</th>
 		</tr>
@@ -26,7 +108,7 @@
             {{ data.header }}
             <tr {{ data.tr_attr }}>
                 <td>
-                    <input type=hidden name=itemid{{ data.j }} value={{ data.id }}>
+                    <input type=hidden name=itemid{{ data.j }} value={{ data.db }}.{{ data.id }}>
                     <input type=checkbox name=checkid{{ data.j }}>
                 </td>
                 <td>

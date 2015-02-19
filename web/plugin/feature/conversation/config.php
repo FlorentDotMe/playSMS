@@ -23,6 +23,6 @@ $menutab = $core_config['menutab']['my_account'];
 
 $menu_config[$menutab][] = array(
 	'index.php?app=main&inc=feature_conversation&route=conversation&op=conversation',
-	_('My Conversation') ,
+	_('My Conversations') ,
 	1
 );
