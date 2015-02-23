@@ -43,6 +43,35 @@ switch (_OP_) {
         $count += dba_count(_DB_PREF_ . '_tblSMSIncoming', $conditions_in);
         $nav = themes_nav($count);
 
+        $db_query = "(
+                        SELECT
+                            tblOut.p_dst AS sender
+                        FROM
+                            playsms_tblSMSOutgoing AS tblOut
+                        WHERE
+                            tblOut.flag_deleted = 0
+                            AND tblOut.uid = " . $user_config['uid'] . "
+                     ) UNION (
+                        SELECT
+                            tblIn.in_sender AS sender
+                        FROM
+                            playsms_tblSMSIncoming AS tblIn
+                        WHERE
+                            tblIn.flag_deleted = 0
+                            AND tblIn.in_uid = " . $user_config['uid'] . "
+                     ) ORDER BY sender ASC";
+
+        $q = 0;
+        $list_sender = '';
+        $db_result = @dba_query($db_query);
+        while ($db_row = dba_fetch_array($db_result)) {
+            if($list_sender != '') {
+                $list_sender = $list_sender . ',';
+            }
+            $list_sender = $list_sender . '{id:' . $db_row['sender'] . ',text:"' . $db_row['sender'] . '"}';
+            $q++;
+        }
+
         // MySQL Query
         // Expected output
         //+----+----------+--------+-------------+------------+
@@ -83,6 +112,7 @@ switch (_OP_) {
         while ($db_row = dba_fetch_array($db_result)) {
             $list[] = $db_row;
         }
+
         unset($tpl);
         $tpl = array(
             'vars' => array(
@@ -95,6 +125,7 @@ switch (_OP_) {
                 'New' => $icon_config['new'],
                 'Message in' => _('Received'),
                 'Message out' => _('Sent'),
+                'Last update' => _('Last update'),
                 'ARE_YOU_SURE' => _('Are you sure you want to delete these items ?'),
                 // Send SMS feature
                 'Send message' => _('Send message'),
@@ -105,6 +136,7 @@ switch (_OP_) {
                 'to' => $to,
                 'chars' => _('chars'),
                 'SMS' => _('SMS'),
+                'DataSelect' => $list_sender,
                 'ERROR' => $error_content,
                 'HTTP_PATH_BASE' => _HTTP_PATH_BASE_,
                 'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
@@ -115,7 +147,6 @@ switch (_OP_) {
 
         $i = $nav['top'];
         $j = 0;
-        $list_sender = array();
         $flag_section = false;
         for ($j = 0; $j < count($list); $j++) {
             $list[$j] = core_display_data($list[$j]);
@@ -194,7 +225,10 @@ switch (_OP_) {
                     // Format conversation header
                     $header = '
                         <tr data-toggle="collapse" data-target=".collapse' . $l . '" class="accordion-toggle text-center warning">
-                            <td colspan="4"><b>' . $cell['sender'] . '</b> ' . $reply . ' (Last update: ' . $cell['datetime_in'] . $cell['datetime_out'] . ')</td>
+                            <td colspan="4">
+                                <b>' . $cell['sender'] . '</b> ' .
+                                $reply . ' (' . _('Last update') . ': ' . $cell['datetime_in'] . $cell['datetime_out'] . ')
+                                </td>
                         </tr>';
                 } else {
                     // Empty conversation header if not the first message

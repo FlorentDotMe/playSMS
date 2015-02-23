@@ -1,18 +1,22 @@
 <script type="text/javascript"
-    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery/jquery-2.0.3.min.js"></script>
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.min.js"></script>
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.tablesorter.min.js"></script>
 <link rel="stylesheet"
     href="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.css" />
 <script type="text/javascript"
     src="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.min.js"></script>
+<script type="text/javascript"
+    src="http://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<link rel="stylesheet"
+    href="http://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#msg_combo_sendto").select2({
+        $("#msg_sendto").select2({
             multiple: true,
-            /* placeholder: " Send to ", */
             allowClear: true,
-            minimumInputLength: 2,
-            separator: ",",
-            tokenSeparators: [","],
+            selectOnBlur: false,
+            data: [{{ DataSelect }}],
             initSelection : function (element, callback) {
                 var data = [];
                 $(element.val().split(",")).each(function () {
@@ -26,28 +30,13 @@
                 }).length===0) {
                     return {id:term, text:term};
                 }
-            },
-            ajax: {
-                url: "{{ HTTP_PATH_BASE }}",
-                dataType: 'json',
-                quietMillis: 100,
-                data: function (term, page) {
-                    return {
-                        app: "webservices",
-                        op: "phonebook",
-                        keyword: term
-                    };
-                },
-                results: function (data, page) {
-                    return {results: data};
-                }
             }
         });
         $("#message").focus();
-    });
-
+    })
+        
     function replyto(event,recipient){
-        $("#msg_combo_sendto").select2("val", [recipient]);
+        $("#msg_sendto").select2("val", [recipient]);
         event.stopPropagation();
         $("#message").focus();
     }
@@ -60,11 +49,11 @@
 <input type=hidden value="{{ MAX_SMS_LENGTH }}" name="hiddcount" id="hiddcount"> 
 <input type=hidden value="{{ MAX_SMS_LENGTH_UNICODE }}" name="hiddcount_unicode" id="hiddcount_unicode">
 <div class="newsms accordion-body col-sm-4">
-    <div class="form-group">
+<!--    <div class="form-group">-->
+<div>
         <label for="msg_combo_sendto">{{ Send to }}</label>
         <p>
-            <input type="hidden" name="p_num_text" id=msg_combo_sendto
-                style="width: 100%" value="{{ to }}">
+            <input id="msg_sendto" name="p_num_text" style="width: 100%" class="select2-input"/>
         </p>
     </div>
     <div class="form-group">

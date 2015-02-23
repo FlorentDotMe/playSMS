@@ -5,176 +5,56 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "All inbox"
-msgstr ""
-
-msgid "All incoming messages"
-msgstr ""
-
-msgid "All outgoing messages"
-msgstr ""
-
-msgid "All reports"
-msgstr ""
-
-msgid "Amount"
-msgstr ""
-
 msgid "Are you sure you want to delete these items ?"
 msgstr ""
 
-msgid "Are you sure you want to delete these transactions ?"
-msgstr ""
-
-msgid "Balance"
-msgstr ""
-
-msgid "Balance recorded on transaction"
-msgstr ""
-
-msgid "Ban date/time"
-msgstr ""
-
-msgid "Banned users list"
-msgstr ""
-
-msgid "Billing"
-msgstr ""
-
-msgid "Content"
-msgstr ""
-
-msgid "Credit"
-msgstr ""
-
-msgid "Current IP address"
-msgstr ""
-
-msgid "Deleted"
-msgstr ""
-
-msgid "Delivered"
-msgstr ""
-
-msgid "Email"
-msgstr ""
-
-msgid "Failed"
-msgstr ""
-
-msgid "Feature"
-msgstr ""
-
-msgid "Footer"
-msgstr ""
-
-msgid "From"
-msgstr ""
-
-msgid "Inbox"
-msgstr ""
-
-msgid "Incoming messages"
-msgstr ""
-
-msgid "Keyword"
+msgid "Conversations"
 msgstr ""
 
 msgid "Last update"
 msgstr ""
 
-msgid "List of my credit transactions"
-msgstr ""
-
 msgid "Message"
 msgstr ""
 
-msgid "My credit transactions"
+msgid "My Conversations"
 msgstr ""
 
-msgid "My report"
+msgid "Received"
 msgstr ""
 
-msgid "Outgoing messages"
+msgid "SMS"
 msgstr ""
 
-msgid "Pending"
+msgid "Selected message has been deleted"
 msgstr ""
 
-msgid "Report"
+msgid "Send"
 msgstr ""
 
-msgid "Report all users"
+msgid "Send message"
 msgstr ""
 
-msgid "Report banned users"
-msgstr ""
-
-msgid "Report whose online"
-msgstr ""
-
-msgid "SMSC"
-msgstr ""
-
-msgid "Sandbox"
-msgstr ""
-
-msgid "Selected incoming message has been deleted"
-msgstr ""
-
-msgid "Selected outgoing message has been deleted"
-msgstr ""
-
-msgid "Selected transactions has been deleted"
+msgid "Send to"
 msgstr ""
 
 msgid "Sent"
 msgstr ""
 
-msgid "Status"
+msgid "Unicode message"
 msgstr ""
 
-msgid "Time"
+msgid "You must select receiver and your message should not be empty"
 msgstr ""
 
-msgid "To"
+msgid "Your message has been delivered to queue"
 msgstr ""
 
-msgid "Total"
+msgid "chars"
 msgstr ""
 
-msgid "Transaction datetime"
+msgid "failed"
 msgstr ""
 
-msgid "Unable to unban user"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "User agent"
-msgstr ""
-
-msgid "User has been unbanned"
-msgstr ""
-
-msgid "Whose online"
-msgstr ""
-
-msgid "cost"
-msgstr ""
-
-msgid "count"
-msgstr ""
-
-msgid "handled"
-msgstr ""
-
-msgid "rate"
-msgstr ""
-
-msgid "unhandled"
-msgstr ""
-
-msgid "username"
+msgid "queued"
 msgstr ""
