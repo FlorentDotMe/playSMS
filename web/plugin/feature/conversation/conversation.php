@@ -32,12 +32,7 @@ switch (_OP_) {
         $conditions_in = array(
             'uid' => $user_config['in_uid'],
             'flag_deleted' => 0
-        );
-        $extras = array(
-            'GROUP BY' => 'p_dst',
-            'GROUP BY' => 'sender',
-            'LIMIT' => $nav['limit'],
-            'OFFSET' => $nav['offset']
+
         );
         $count = dba_count(_DB_PREF_ . '_tblSMSOutgoing', $conditions_out);
         $count += dba_count(_DB_PREF_ . '_tblSMSIncoming', $conditions_in);
@@ -285,7 +280,6 @@ switch (_OP_) {
                                 ));
                                 break;
                         }
-
                     }
                 }
                 $_SESSION['error_string'] = _('Selected message has been deleted');
@@ -322,9 +316,6 @@ switch (_OP_) {
                 // SMS message
                 $message = $_REQUEST['message'];
                 
-                // save it in session for next form
-                $_SESSION['tmp']['message'] = $message;
-                
                 // destination numbers
                 if ($sms_to = trim($_REQUEST['p_num_text'])) {
                     $sms_to = explode(',', $sms_to);
@@ -341,7 +332,6 @@ switch (_OP_) {
                 break;
         }
         $ref = $nav['url'] . '&page=' . $nav['page'] . '&nav=' . $nav['nav'];
-        _log('url:' . _u($ref),2,'conversation');
         header("Location: " . _u($ref));
         break;
     
