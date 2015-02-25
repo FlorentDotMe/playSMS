@@ -1,0 +1,53 @@
+msgid "Are you sure you want to delete these items ?"
+msgstr ""
+
+msgid "Conversations"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "My Conversations"
+msgstr ""
+
+msgid "Received"
+msgstr ""
+
+msgid "SMS"
+msgstr ""
+
+msgid "Selected message has been deleted"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "Send message"
+msgstr ""
+
+msgid "Send to"
+msgstr ""
+
+msgid "Sent"
+msgstr ""
+
+msgid "Unicode message"
+msgstr ""
+
+msgid "You must select receiver and your message should not be empty"
+msgstr ""
+
+msgid "Your message has been delivered to queue"
+msgstr ""
+
+msgid "chars"
+msgstr ""
+
+msgid "failed"
+msgstr ""
+
+msgid "queued"
+msgstr ""

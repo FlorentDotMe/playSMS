@@ -1,0 +1,122 @@
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.min.js"></script>
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.tablesorter.min.js"></script>
+<link rel="stylesheet"
+    href="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.css" />
+<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/combobox/select2.min.js"></script>
+<script type="text/javascript"
+    src="http://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<link rel="stylesheet"
+    href="http://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#msg_sendto").select2({
+            multiple: true,
+            allowClear: true,
+            selectOnBlur: false,
+            data: [{{ DataSelect }}],
+            initSelection : function (element, callback) {
+                var data = [];
+                $(element.val().split(",")).each(function () {
+                    data.push({id: this, text: this});
+                });
+                callback(data);
+            },
+            createSearchChoice: function(term, data) {
+                if ($(data).filter(function () {
+                    return this.text.localeCompare(term)===0;
+                }).length===0) {
+                    return {id:term, text:term};
+                }
+            }
+        });
+        $("#message").focus();
+    })
+        
+    function replyto(event,recipient){
+        $("#msg_sendto").select2("val", [recipient]);
+        event.stopPropagation();
+        $("#message").focus();
+    }
+</script>
+{{ ERROR }}
+<h2>{{ Conversations }}</h2>
+<form id="fm_sendsms" name="fm_sendsms" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
+{{ CSRF_FORM }}
+<input type=hidden name='go' value='sendsms'>
+<input type=hidden value="{{ MAX_SMS_LENGTH }}" name="hiddcount" id="hiddcount"> 
+<input type=hidden value="{{ MAX_SMS_LENGTH_UNICODE }}" name="hiddcount_unicode" id="hiddcount_unicode">
+<div class="newsms accordion-body col-sm-4">
+<!--    <div class="form-group">-->
+<div>
+        <label for="msg_combo_sendto">{{ Send to }}</label>
+        <p>
+            <input id="msg_sendto" name="p_num_text" style="width: 100%" class="select2-input"/>
+        </p>
+    </div>
+    <div class="form-group">
+        <label for="message">{{ Message }}</label>
+        <p>
+            <textarea name="message" id=message style="width: 100%"
+                onFocus="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onClick="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onkeypress="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onblur="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"
+                onKeyUp="SmsSetCounter_Abstract('message','txtcount','hiddcount','hiddcount_unicode');"></textarea>
+        </p>
+        <p>
+            <input type="text" id='txtcount' name="txtcount" style="width: 100%"
+                value="0 char : 0 SMS" size="17"
+                onFocus="document.fm_conversation.message.focus();" readonly>
+        </p>
+    </div>
+    <div class="form-group">
+        <input type=submit class=button value='{{ Send }}'>
+    </div>
+</div>
+</form>
+
+<form id="fm_conversation" name="fm_conversation" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
+{{ CSRF_FORM }}
+<input type=hidden name=go value="delete">
+<div class="table-responsive">
+<table class=playsms-table-list>
+	<thead>
+		<tr>
+			<th width=5%>
+                <input type=checkbox onclick=CheckUncheckAll(document.fm_conversation)>
+                <a href="#" onClick="return SubmitConfirm('{{ ARE_YOU_SURE }}', 'fm_conversation');">{{ Delete }}</a>
+            </th>
+			<th width=30% class="text-center">{{ Message out }}</th>
+			<th width=30% class="text-center">{{ Message in }}
+                <div class=pull-right>
+                    <a href="#" onclick="window.location.reload(true);" class="playsms-icon glyphicon glyphicon-refresh" alt="Refresh" title="Refresh"></a>
+                </div>
+            </th>
+		</tr>
+	</thead>
+	<tbody>
+		<loop.data>
+            {{ data.header }}
+            <tr {{ data.tr_attr }}>
+                <td>
+                    <input type=hidden name=itemid{{ data.j }} value={{ data.db }}.{{ data.id }}>
+                    <input type=checkbox name=checkid{{ data.j }}>
+                </td>
+                <td>
+                    <div id="user_inbox_msg">{{ data.msg_out }}</div>
+                    <div id="msg_label">{{ data.datetime_out }}&nbsp;{{ data.status_out }}</div>
+                </td>
+                <td>
+                    <div id="user_inbox_msg">{{ data.msg_in }}</div>
+                    <div id="msg_label">{{ data.datetime_in }}&nbsp;{{ data.status_in }}</div>
+                </td>
+            </tr>
+		</loop.data>
+	</tbody>
+</table>
+</div>
+<div class=pull-right>{{ NAV_FORM }}</div>
+</form>
