@@ -135,8 +135,8 @@ switch (_OP_) {
                 'ERROR' => $error_content,
                 'HTTP_PATH_BASE' => _HTTP_PATH_BASE_,
                 'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
-                'MAX_SMS_LENGTH' => $core_config['main']['max_sms_length'],
-                'MAX_SMS_LENGTH_UNICODE' =>$core_config['main']['max_sms_length_unicode']
+                'MAX_SMS_LENGTH' => $core_config['main']['max_sms_length'] - strlen($user_config['footer']),
+                'MAX_SMS_LENGTH_UNICODE' =>$core_config['main']['max_sms_length_unicode'] - strlen($user_config['footer'])
             )
         );
 
@@ -294,17 +294,8 @@ switch (_OP_) {
                 }
                 
                 // SMS footer
-                if ($core_config['main']['allow_custom_footer']) {
-                    $sms_footer = trim($_REQUEST['sms_footer']);
-                } else {
-                    $sms_footer = $user_config['footer'];
-                }
-                
-                // nofooter option
-                $nofooter = true;
-                if ($sms_footer) {
-                    $nofooter = false;
-                }
+                $nofooter = false;
+                $sms_footer = $user_config['footer'];
                 
                 // unicode or not
                 $msg_unicode = $_REQUEST['msg_unicode'];
