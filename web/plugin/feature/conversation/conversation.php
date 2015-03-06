@@ -36,7 +36,11 @@ switch (_OP_) {
         );
         $count = dba_count(_DB_PREF_ . '_tblSMSOutgoing', $conditions_out);
         $count += dba_count(_DB_PREF_ . '_tblSMSIncoming', $conditions_in);
-        $nav = themes_nav($count);
+        if ( $count == 0 ) {
+            $count = 1;
+        }
+        $base_url = "index.php?app=main&inc=feature_conversation&route=conversation&op=conversation";
+        $nav = themes_nav($count,$base_url);
 
         $db_query = "(
                         SELECT
