@@ -53,22 +53,23 @@ if (auth_isadmin()) {
 	if (!(($user_edited['uid'] == $user_config['uid']) || ($user_edited['uid'] == 1) || ($user_edited['status'] == 2))) {
 		$allow_edit_status = TRUE;
 	}
-
+	
 	$list = user_getsubuserbyuid($user_edited['uid']);
 	if (count($list) > 0) {
 		$show_status_hint = TRUE;
 		$allow_edit_status = FALSE;
 	}
-
+	
 	if ($user_edited['status'] == 4) {
 		$allow_edit_parent = TRUE;
 	}
 }
 
 switch (_OP_) {
-	case "user_pref" :
+	case "user_pref":
 		if ($c_user = dba_search(_DB_PREF_ . '_tblUser', '*', array(
-			'username' => $c_username
+			'flag_deleted' => 0,
+			'username' => $c_username 
 		))) {
 			if ($allow_edit_status) {
 				$status = (int) $c_user[0]['status'];
@@ -86,11 +87,11 @@ switch (_OP_) {
 			$zipcode = $c_user[0]['zipcode'];
 			$sender = core_sanitize_sender($c_user[0]['sender']);
 		} else {
-			$_SESSION['error_string'] = _('User does not exist') . ' (' . _('username') . ': ' . $uname . ')';
+			$_SESSION['dialog']['info'][] = _('User does not exist') . ' (' . _('username') . ': ' . $uname . ')';
 			header("Location: " . _u('index.php?app=main&inc=core_user&route=user_mgmnt&op=user_list&view=' . $view));
 			exit();
 		}
-
+		
 		if ($allow_edit_status) {
 			if ($user_edited['status'] == 3) {
 				$selected_users = 'selected';
@@ -103,45 +104,25 @@ switch (_OP_) {
 			";
 			$select_status = '<select name="up_status">' . $option_status . '</select>';
 		}
-
+		
 		// when allowed to edit parents of subusers
 		if ($allow_edit_parent) {
 			// get list of users as parents
-			$option_parents = '<option value="0">--' . _('Select parent user for subuser') . '--</option>';
-
-			// get admins
-			$list = user_getallwithstatus(2);
-			foreach ($list as $parent ) {
-				if ($parent['uid'] == $user_edited['parent_uid']) {
-					$selected = 'selected';
-				}
-				$option_parents .= '<option value="' . $parent['uid'] . '" ' . $selected . '>' . $parent['username'] . ' - ' . _('Administrator') . '</option>';
-				$selected = '';
-			}
-
-			// get users
-			$list = user_getallwithstatus(3);
-			foreach ($list as $parent ) {
-				if ($parent['uid'] == $user_edited['parent_uid']) {
-					$selected = 'selected';
-				}
-				$option_parents .= '<option value="' . $parent['uid'] . '" ' . $selected . '>' . $parent['username'] . '</option>';
-				$selected = '';
-			}
-			$select_parents = '<select name="up_parent_uid">' . $option_parents . '</select>';
+			$default_parent_uid = ($parent_uid && ($parent['uid'] == $user_edited['parent_uid']) ? $parent['uid'] : $core_config['main']['default_parent']);
+			$select_parents = themes_select_account_level_single(3, 'up_parent_uid', $default_parent_uid);
 		}
-
+		
 		// enhance privacy for subusers
-		$enhance_privacy = TRUE;
+		$show_personal_information = TRUE;
 		$main_config = $core_config['main'];
-		if(!auth_isadmin() && $main_config['enhance_privacy_subuser']){
-			$enhance_privacy = FALSE;
+		if (!auth_isadmin() && $user_edited['status'] == 4 && $main_config['enhance_privacy_subuser']) {
+			$show_personal_information = FALSE;
 		}
-
+		
 		// get country option
 		$option_country = "<option value=\"0\">--" . _('Please select') . "--</option>\n";
 		$result = country_search();
-		for($i = 0; $i < count($result); $i++) {
+		for ($i = 0; $i < count($result); $i++) {
 			$country_id = $result[$i]['country_id'];
 			$country_name = $result[$i]['country_name'];
 			$selected = "";
@@ -150,10 +131,10 @@ switch (_OP_) {
 			}
 			$option_country .= "<option value=\"$country_id\" $selected>$country_name</option>\n";
 		}
-
+		
 		// admin or users
 		if ($uname && (auth_isadmin() || $is_parent)) {
-			$form_title = _('Manage user');
+			$form_title = _('Manage account');
 			if ($is_parent) {
 				$button_delete = "<input type=button class=button value='" . _('Delete') . "' onClick=\"javascript: ConfirmURL('" . _('Are you sure you want to delete subuser ?') . " (" . _('username') . ": " . $c_username . ")','index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_del" . $url_uname . "')\">";
 				$button_back = _back('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list');
@@ -164,17 +145,17 @@ switch (_OP_) {
 		} else {
 			$form_title = _('Preferences');
 		}
-
+		
 		// error string
-		if ($err = $_SESSION['error_string']) {
-			$error_content = "<div class=error_string>$err</div>";
+		if ($err = TRUE) {
+			$error_content = _dialog();
 		}
-
+		
 		$tpl = array(
 			'name' => 'user_pref',
 			'vars' => array(
-				'User status' => _('User status'),
-				'Parent user' => _('Parent user') . " (" . _('for subuser only') . ")",
+				'Account status' => _('Account status'),
+				'Parent account' => _('Parent account') . " (" . _('for subuser only') . ")",
 				'Login information' => _('Login information'),
 				'Username' => _('Username'),
 				'Password' => _('Password'),
@@ -190,9 +171,9 @@ switch (_OP_) {
 				'Zipcode' => _('Zipcode'),
 				'Save' => _('Save'),
 				'HINT_STATUS' => _hint(_('Cannot change status when user have subusers')),
-				'HINT_PARENT' => _hint(_('Parent user is mandatory for subusers only. If no value is given then the subuser will be automatically assigned to user admin')),
+				'HINT_PARENT' => _hint(_('Parent account is mandatory for subusers only. If no value is given then the subuser will be automatically assigned to user admin')),
 				'STATUS' => _('User'),
-				'ERROR' => $error_content,
+				'DIALOG_DISPLAY' => $error_content,
 				'FORM_TITLE' => $form_title,
 				'BUTTON_DELETE' => $button_delete,
 				'BUTTON_BACK' => $button_back,
@@ -208,19 +189,20 @@ switch (_OP_) {
 				'city' => $city,
 				'state' => $state,
 				'option_country' => $option_country,
-				'zipcode' => $zipcode
+				'zipcode' => $zipcode 
 			),
 			'ifs' => array(
 				'edit_status' => $allow_edit_status,
 				'edit_parent' => $allow_edit_parent,
 				'edit_status_hint' => $show_status_hint,
-				'enhance_privacy' => $enhance_privacy
-			)
+				'show_personal_information' => $show_personal_information 
+			) 
 		);
 		_p(tpl_apply($tpl));
 		break;
-	case "user_pref_save" :
-		$_SESSION['error_string'] = _('No changes made');
+	case "user_pref_save":
+		$continue = TRUE;
+
 		$fields = array(
 			'name',
 			'email',
@@ -243,55 +225,31 @@ switch (_OP_) {
 			$fields[] = 'parent_uid';
 		}
 		
-		for($i = 0; $i < count($fields); $i++) {
-			$up[$fields[$i]] = trim($_POST['up_' . $fields[$i]]);
+		for ($i = 0; $i < count($fields); $i++) {
+			if ($c_data = trim($_POST['up_' . $fields[$i]])) {
+				$up[$fields[$i]] = $c_data;
+			}
 		}
 		
 		// subuser's parent uid, by default its uid=1
 		if ($_POST['up_parent_uid']) {
-			$up['parent_uid'] = (int) ($user_edited['status'] == 4 ? $_POST['up_parent_uid'] : 1);
+			$up['parent_uid'] = (int) ($user_edited['status'] == 4 ? $_POST['up_parent_uid'] : $core_config['main']['default_parent']);
 		} else {
 			$up['parent_uid'] = (int) user_getparentbyuid(user_username2uid($c_username));
 		}
 		
-		$up['username'] = $c_username;
-		$up['lastupdate_datetime'] = core_adjust_datetime(core_get_datetime());
-		if ($up['name']) {
-			$v = user_edit_validate($up);
-			if ($v['status']) {
-				$continue = true;
-				if ($up['password'] && $_POST['up_password_conf']) {
-					if ($up['password'] == $_POST['up_password_conf']) {
-						$up['password'] = md5($up['password']);
-					} else {
-						$_SESSION['error_string'] = _('Password does not match');
-						$continue = false;
-					}
-				} else {
-					unset($up['password']);
-				}
-				if ($continue) {
-					if (dba_update(_DB_PREF_ . '_tblUser', $up, array(
-						'username' => $c_username
-					))) {
-						if ($up['password']) {
-							$_SESSION['error_string'] = _('Preferences has been saved and password updated');
-						} else if ($up['token']) {
-							$_SESSION['error_string'] = _('Preferences has been saved and webservices token updated');
-						} else {
-							$_SESSION['error_string'] = _('Preferences has been saved');
-						}
-					} else {
-						$_SESSION['error_string'] = _('Fail to save preferences');
-					}
-				}
-			} else {
-				$_SESSION['error_string'] = $v['error_string'];
-			}
-		} else {
-			$_SESSION['error_string'] = _('You must fill all field');
+		if ($up['password'] && ($up['password'] != $_POST['up_password_conf'])) {
+			$ret['error_string'] = _('Password does not match');
+			$continue = false;
 		}
-		_log('saving username:' . $c_username . ' error_string:' . $_SESSION['error_string'], 2, 'user_pref');
+		
+		if ($continue) {
+			$uid = user_username2uid($c_username);
+			$ret = user_edit($uid, $up);
+		}
+		$_SESSION['dialog']['info'][] = $ret['error_string'];
+		
+		_log('saving username:' . $c_username . ' error_string:[' . $ret['error_string'] . ']', 2, 'user_pref');
 		header("Location: " . _u('index.php?app=main&inc=core_user&route=user_pref&op=user_pref' . $url_uname . '&view=' . $view));
 		exit();
 		break;

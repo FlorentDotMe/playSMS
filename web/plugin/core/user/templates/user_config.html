@@ -1,4 +1,4 @@
-{{ ERROR }}
+{{ DIALOG_DISPLAY }}
 <h2>{{ FORM_TITLE }}</h2>
 <form action="index.php?app=main&inc=core_user&route=user_config&op=user_config_save{{ URL_UNAME }}&view={{ VIEW }}" method=post enctype="multipart/form-data">
 {{ CSRF_FORM }}
@@ -11,16 +11,24 @@
 			<td>{{ c_username }}</td>
 		</tr>
 		<tr>
+			<td>{{ Access Control List }}</td>
+			<td>{{ option_acl }} {{ HINT_ACL }}</td>
+		</tr>
+		<tr>
 			<td>{{ Default sender ID }}</td>
 			<td><select name='up_sender'>{{ option_sender_id }}</select></td>
 		</tr>
 		<tr>
 			<td>{{ Default message footer }}</td>
-			<td><input type=text maxlength=30 name=up_footer value='{{ footer }}'> {{ HINT_MAX_ALPHANUMERIC }}</td>
+			<td><input type=text maxlength=30 name=up_footer value="{{ footer }}"> {{ HINT_MAX_ALPHANUMERIC }}</td>
 		</tr>
 		<tr>
 			<td>{{ Credit }}</td>
 			<td><input type=text maxlength=14 value='{{ credit }}' readonly> {{ HINT_MANAGE_CREDIT }}</td>
+		</tr>
+		<tr>
+			<td>{{ Enable credit unicode SMS as normal SMS }}</td>
+			<td>{{ option_enable_credit_unicode }}</td>
 		</tr>
 		<tr>
 			<td>{{ Webservices username }}</td>
@@ -31,7 +39,7 @@
 			<td><input name='up_token' type=text value='{{ token }}'></td>
 		</tr>
 		<tr>
-			<td>{{ New webservices token }}</td>
+			<td>{{ Renew webservices token }}</td>
 			<td><select name='up_new_token'>{{ option_new_token }}</select></td>
 		</tr>
 		<tr>

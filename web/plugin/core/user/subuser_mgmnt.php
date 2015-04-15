@@ -18,12 +18,10 @@
  */
 defined('_SECURE_') or die('Forbidden');
 
-if (!auth_isvalid()) {
-	auth_block();
-}
-
-if (!(($user_config['status'] == 2) || ($user_config['status'] == 3))) {
-	auth_block();
+if (!auth_isuser()) {
+	if (!auth_isadmin()) {
+		auth_block();
+	}
 }
 
 if ($_REQUEST['uname']) {
@@ -34,15 +32,19 @@ if ($_REQUEST['uname']) {
 }
 
 switch (_OP_) {
-	case "subuser_list" :
+	case "subuser_list":
 		$search_var = array(
 			_('Registered') => 'register_datetime',
 			_('Username') => 'username',
 			_('Name') => 'name',
-			_('Mobile') => 'mobile' 
+			_('Mobile') => 'mobile',
+			_('ACL') => 'acl_id' 
 		);
-		$search = themes_search($search_var);
+		$search = themes_search($search_var, '', array(
+			'acl_id' => 'acl_getid' 
+		));
 		$conditions = array(
+			'flag_deleted' => 0,
 			'status' => 4,
 			'parent_uid' => $user_config['uid'] 
 		);
@@ -55,11 +57,11 @@ switch (_OP_) {
 			'OFFSET' => $nav['offset'] 
 		);
 		$list = dba_search(_DB_PREF_ . '_tblUser', '*', $conditions, $keywords, $extras);
-		if ($err = $_SESSION['error_string']) {
-			$content = "<div class=error_string>$err</div>";
+		if ($err = TRUE) {
+			$content = _dialog();
 		}
 		$content .= "
-			<h2>" . _('Manage subusers') . "</h2>
+			<h2>" . _('Manage subuser') . "</h2>
 			<h3>" . _('List of subusers') . "</h3>
 			<p>" . $search['form'] . "</p>			
 			<div class=actions_box>
@@ -72,23 +74,24 @@ switch (_OP_) {
 			<div class=table-responsive>
 			<table class=playsms-table-list>
 			<thead><tr>
-				<th width='20%'>" . _('Registered') . "</th>
+				<th width='15%'>" . _('Registered') . "</th>
 				<th width='15%'>" . _('Username') . "</th>
-				<th width='20%'>" . _('Name') . "</th>
+				<th width='15%'>" . _('Name') . "</th>
 				<th width='15%'>" . _('Mobile') . "</th>
-				<th width='15%'>" . _('Credit') . "</th>
+				<th width='10%'>" . _('Credit') . "</th>
+				<th width='15%'>" . _('ACL') . "</th>
 				<th width='15%'>" . _('Action') . "</th>
 			</tr></thead>
 			<tbody>";
 		$j = $nav['top'];
-		for($i = 0; $i < count($list); $i++) {
+		for ($i = 0; $i < count($list); $i++) {
 			
 			$action = "";
 			
 			// login as
 			if ($list[$i]['uid'] != $user_config['uid']) {
 				$main_config = $core_config['main'];
-				if(!$main_config['disable_login_as'] || auth_isadmin()){
+				if (!$main_config['disable_login_as'] || auth_isadmin()) {
 					$action = "<a href=\"" . _u('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=login_as&uname=' . $list[$i]['username']) . "\">" . $icon_config['login_as'] . "</a>";
 				}
 			}
@@ -121,7 +124,8 @@ switch (_OP_) {
 					<td>" . $banned_icon . "" . $list[$i]['username'] . " </td>
 					<td>" . $list[$i]['name'] . "</td>
 					<td>" . $list[$i]['mobile'] . "</td>	
-					<td>" . rate_getusercredit($list[$i]['username']) . "</td>	
+					<td>" . rate_getusercredit($list[$i]['username']) . "</td>
+					<td>" . acl_getnamebyuid($list[$i]['uid']) . "</td>	
 					<td>$action</td>
 				</tr>";
 		}
@@ -132,16 +136,16 @@ switch (_OP_) {
 		_p($content);
 		break;
 	
-	case "subuser_add" :
-		if ($err = $_SESSION['error_string']) {
-			$content = "<div class=error_string>$err</div>";
+	case "subuser_add":
+		if ($err = TRUE) {
+			$content = _dialog();
 		}
 		$add_datetime_timezone = $_REQUEST['add_datetime_timezone'];
 		$add_datetime_timezone = ($add_datetime_timezone ? $add_datetime_timezone : core_get_timezone());
 		
 		// get language options
 		$lang_list = '';
-		for($i = 0; $i < count($core_config['languagelist']); $i++) {
+		for ($i = 0; $i < count($core_config['languagelist']); $i++) {
 			$language = $core_config['languagelist'][$i];
 			$c_language_title = $plugin_config[$language]['title'];
 			if ($c_language_title) {
@@ -149,12 +153,15 @@ switch (_OP_) {
 			}
 		}
 		if (is_array($lang_list)) {
-			foreach ($lang_list as $key => $val ) {
+			foreach ($lang_list as $key => $val) {
 				if ($val == core_lang_get()) $selected = "selected";
 				$option_language_module .= "<option value=\"" . $val . "\" $selected>" . $key . "</option>";
 				$selected = "";
 			}
 		}
+		
+		// get access control list
+		$option_acl = _select('add_acl_id', array_flip(acl_getallbyuid($user_config['uid'])));
 		
 		$content .= "
 		<h2>" . _('Manage subuser') . "</h2>
@@ -164,23 +171,26 @@ switch (_OP_) {
 		<table class=playsms-table>
 		<tbody>
 		<tr>
-			<td>" . _mandatory('Username') . "</td><td><input type='text' maxlength='30' name='add_username' value=\"$add_username\"></td>
+			<td class=label-sizer>" . _('Access Control List') . "</td><td>" . $option_acl . "</td>
 		</tr>
 		<tr>
-			<td>" . _mandatory('Password') . "</td><td><input type='password' maxlength='30' name='add_password' value=\"$add_password\"></td>
+			<td>" . _mandatory(_('Username')) . "</td><td><input type='text' maxlength='30' name='add_username' value=\"$add_username\"></td>
 		</tr>
 		<tr>
-			<td>" . _mandatory('Full name') . "</td><td><input type='text' maxlength='100' name='add_name' value=\"$add_name\"></td>
+			<td>" . _mandatory(_('Password')) . "</td><td><input type='password' maxlength='30' name='add_password' value=\"$add_password\"></td>
 		</tr>
 		<tr>
-			<td>" . _mandatory('Email') . "</td><td><input type='text' maxlength='250' name='add_email' value=\"$add_email\"></td>
+			<td>" . _mandatory(_('Full name')) . "</td><td><input type='text' maxlength='100' name='add_name' value=\"$add_name\"></td>
+		</tr>
+		<tr>
+			<td>" . _mandatory(_('Email')) . "</td><td><input type='text' maxlength='250' name='add_email' value=\"$add_email\"></td>
 		</tr>
 		<tr>
 			<td>" . _('Mobile') . "</td><td><input type='text' size='16' maxlength='16' name='add_mobile' value=\"$add_mobile\"> " . _hint(_('Max. 16 numeric or 11 alphanumeric characters')) . "</td>
 		</tr>
 		<tr>
 			<td>" . _('SMS footer') . "</td><td><input type='text' maxlength='30' name='add_footer' value=\"$add_footer\"> " . _hint(_('Max. 30 alphanumeric characters')) . "</td>
-		</tr>	    	    	    
+		</tr>
 		<tr>
 			<td>" . _('Timezone') . "</td><td><input type='text' size='5' maxlength='5' name='add_datetime_timezone' value=\"$add_datetime_timezone\"> " . _hint(_('Eg: +0700 for Jakarta/Bangkok timezone')) . "</td>
 		</tr>
@@ -195,7 +205,8 @@ switch (_OP_) {
 		_p($content);
 		break;
 	
-	case "subuser_add_yes" :
+	case "subuser_add_yes":
+		$add['acl_id'] = (int) $_POST['add_acl_id'];
 		$add['email'] = $_POST['add_email'];
 		$add['username'] = $_POST['add_username'];
 		$add['password'] = $_POST['add_password'];
@@ -216,59 +227,59 @@ switch (_OP_) {
 		$ret = user_add($add);
 		
 		if (is_array($ret)) {
-			$_SESSION['error_string'] = $ret['error_string'];
+			$_SESSION['dialog']['info'][] = $ret['error_string'];
 		} else {
-			$_SESSION['error_string'] = _('Unable to process subuser addition');
+			$_SESSION['dialog']['info'][] = _('Unable to process subuser addition');
 		}
 		
 		header("Location: " . _u('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_add'));
 		exit();
 		break;
 	
-	case "subuser_del" :
+	case "subuser_del":
 		$up['username'] = $subuser_edited['username'];
 		$del_uid = user_username2uid($up['username']);
 		$ret = user_remove($del_uid);
-		$_SESSION['error_string'] = $ret['error_string'];
+		$_SESSION['dialog']['info'][] = $ret['error_string'];
 		header("Location: " . _u('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list'));
 		exit();
 		break;
 	
-	case "subuser_unban" :
+	case "subuser_unban":
 		$uid = $subuser_edited['uid'];
 		if ($uid && ($uid == 1 || $uid == $user_config['uid'])) {
-			$_SESSION['error_string'] = _('User admin or currently logged in administrator cannot be unbanned');
+			$_SESSION['dialog']['info'][] = _('Account admin or currently logged in administrator cannot be unbanned');
 		} else if (user_banned_get($uid)) {
 			if (user_banned_remove($uid)) {
-				$_SESSION['error_string'] = _('User has been unbanned') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+				$_SESSION['dialog']['info'][] = _('Account has been unbanned') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 			} else {
-				$_SESSION['error_string'] = _('Unable to unban subuser') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+				$_SESSION['dialog']['info'][] = _('Unable to unban subuser') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 			}
 		} else {
-			$_SESSION['error_string'] = _('User is not on banned subusers list') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+			$_SESSION['dialog']['info'][] = _('User is not on banned subusers list') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 		}
 		header("Location: " . _u('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list'));
 		exit();
 		break;
 	
-	case "subuser_ban" :
+	case "subuser_ban":
 		$uid = $subuser_edited['uid'];
 		if ($uid && ($uid == 1 || $uid == $user_config['uid'])) {
-			$_SESSION['error_string'] = _('User admin or currently logged in administrator cannot be unbanned');
+			$_SESSION['dialog']['info'][] = _('Account admin or currently logged in administrator cannot be unbanned');
 		} else if (user_banned_get($uid)) {
-			$_SESSION['error_string'] = _('User is already on banned subusers list') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+			$_SESSION['dialog']['info'][] = _('User is already on banned subusers list') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 		} else {
 			if (user_banned_add($uid)) {
-				$_SESSION['error_string'] = _('User has been banned') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+				$_SESSION['dialog']['info'][] = _('Account has been banned') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 			} else {
-				$_SESSION['error_string'] = _('Unable to ban subuser') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
+				$_SESSION['dialog']['info'][] = _('Unable to ban subuser') . ' (' . _('username') . ': ' . $subuser_edited['username'] . ')';
 			}
 		}
 		header("Location: " . _u('index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list'));
 		exit();
 		break;
 	
-	case "login_as" :
+	case "login_as":
 		user_session_remove($_SESSION['uid'], $_SESSION['sid']);
 		$uid = user_username2uid($_REQUEST['uname']);
 		auth_login_as($uid);

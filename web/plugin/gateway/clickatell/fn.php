@@ -13,6 +13,12 @@ function clickatell_hook_getsmsstatus($gpid = 0, $uid = "", $smslog_id = "", $p_
 }
 
 function clickatell_hook_playsmsd() {
+
+	// fetch every 60 seconds
+	if (!core_playsmsd_timer(60)) {
+		return;
+	}
+
 	// force to check p_status=1 (sent) as getsmsstatus only check for p_status=0 (pending)
 	// $db_query = "SELECT * FROM "._DB_PREF_."_tblSMSOutgoing WHERE p_status=0 OR p_status=1";
 	$db_query = "SELECT * FROM " . _DB_PREF_ . "_tblSMSOutgoing WHERE p_status='1' AND p_gateway='clickatell'";
@@ -86,8 +92,11 @@ function clickatell_hook_sendsms($smsc, $sms_sender, $sms_footer, $sms_to, $sms_
 	
 	// fixme anton - if sms_from is not set in gateway_number and global number, we cannot pass it to clickatell
 	$set_sms_from = ($sms_from == $sms_sender ? '' : "&from=" . urlencode($sms_from));
+
+	// fixme anton - temporary solution #385 Unable to send messages when clickatell password contains &
+	$password = urlencode(htmlspecialchars_decode($plugin_config['clickatell']['password']));
 	
-	$query_string = "sendmsg?api_id=" . $plugin_config['clickatell']['api_id'] . "&user=" . $plugin_config['clickatell']['username'] . "&password=" . $plugin_config['clickatell']['password'] . "&to=" . urlencode($sms_to) . "&msg_type=$sms_type&text=" . urlencode($sms_msg) . "&unicode=" . $unicode . $set_sms_from;
+	$query_string = "sendmsg?api_id=" . $plugin_config['clickatell']['api_id'] . "&user=" . $plugin_config['clickatell']['username'] . "&password=" . $password . "&to=" . urlencode($sms_to) . "&msg_type=$sms_type&text=" . urlencode($sms_msg) . "&unicode=" . $unicode . $set_sms_from;
 	$url = $plugin_config['clickatell']['send_url'] . "/" . $query_string;
 	
 	if ($additional_param = $plugin_config['clickatell']['additional_param']) {
@@ -104,7 +113,7 @@ function clickatell_hook_sendsms($smsc, $sms_sender, $sms_footer, $sms_to, $sms_
 	// failed
 	$p_status = 2;
 	if ($fd) {
-		$response = split(":", $fd);
+		$response = explode(":", $fd);
 		$err_code = trim($response[1]);
 		if ((strtoupper($response[0]) == "ID")) {
 			if ($apimsgid = trim($response[1])) {
@@ -145,7 +154,7 @@ function clickatell_getsmsstatus($smslog_id) {
 		logger_print("smslog_id:" . $smslog_id . " apimsgid:" . $apimsgid . " url:" . $url, 3, "clickatell getsmsstatus");
 		$fd = @implode('', file($url));
 		if ($fd) {
-			$response = split(" ", $fd);
+			$response = explode(" ", $fd);
 			$err_code = trim($response[1]);
 			$credit = 0;
 			if ((strtoupper(trim($response[2])) == "CHARGE:")) {

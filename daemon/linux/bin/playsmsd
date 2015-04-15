@@ -11,16 +11,15 @@
  *
  * playSMS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with playSMS.  If not, see <http://www.gnu.org/licenses/>.
+ * along with playSMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
 // Usage:
 // playsmsd <COMMAND> <LOOP_FLAG> <CMD_PARAM>
-
 set_time_limit(0);
 
 error_reporting(0);
@@ -31,7 +30,7 @@ $ini_files = array(
 	'./playsmsd.conf',
 	'~/playsmsd.conf',
 	'/etc/playsmsd.conf',
-	'/usr/local/etc/playsmsd.conf'
+	'/usr/local/etc/playsmsd.conf' 
 );
 
 $continue = FALSE;
@@ -92,15 +91,18 @@ switch ($COMMAND) {
 		
 		exit();
 		break;
-
+	
 	case 'stop':
 		
 		// stop playsmsd services
 		playsmsd_stop();
 		
+		// stop playsmsd child scripts
+		playsmsd_stop_childs();
+		
 		exit();
 		break;
-
+	
 	case 'restart':
 		
 		// stop, wait for 2 seconds and then start
@@ -110,7 +112,7 @@ switch ($COMMAND) {
 		
 		exit();
 		break;
-
+	
 	case 'status':
 		
 		if (playsmsd_isrunning()) {
@@ -122,7 +124,7 @@ switch ($COMMAND) {
 		
 		exit();
 		break;
-
+	
 	case 'check':
 		
 		// non-JSON output
@@ -130,7 +132,7 @@ switch ($COMMAND) {
 		
 		exit();
 		break;
-
+	
 	case 'check_json':
 		
 		// JSON output
@@ -138,7 +140,7 @@ switch ($COMMAND) {
 		
 		exit();
 		break;
-
+	
 	case 'log':
 		
 		// View log
@@ -176,10 +178,13 @@ if (file_exists($PLAYSMS_INSTALL_PATH)) {
 		
 		// execute one time only
 		
+
 		// MAIN ONCE BLOCK
 		
+
 		//echo $COMMAND . " start time:" . mktime() . "\n";
 		
+
 		if ($COMMAND == 'sendqueue') {
 			if ($CMD_PARAM) {
 				$param = explode('_', $CMD_PARAM);
@@ -197,50 +202,241 @@ if (file_exists($PLAYSMS_INSTALL_PATH)) {
 		
 		// END OF ONCE BLOCK
 		
+
 		//echo $COMMAND . " end time:" . mktime() . "\n";
 		
+
 		exit();
 	} else if ($continue && $LOOP_FLAG == 'loop') {
 		
 		// execute in a loop
 		
+
 		$DAEMON_LOOPING = TRUE;
 		
 		while ($DAEMON_LOOPING) {
 			
 			//echo $COMMAND . " start time:" . mktime() . "\n";
 			
-			// re-include init.php on every 'while' to get the most updated configurations
-			include 'init.php';
-			
+
 			// MAIN LOOP BLOCK
 			
+
+			// reload configs
+			
+
+			/**
+			 * Include core functions on plugin core
+			 */
+			
+			$pc = 'core';
+			
+			$dir = _APPS_PATH_PLUG_ . '/' . $pc . '/';
+			unset($core_config[$pc . 'list']);
+			unset($tmp_core_config[$pc . 'list']);
+			$fd = opendir($dir);
+			$pc_names = array();
+			while (false !== ($pl_name = readdir($fd))) {
+				
+				// plugin's dir prefixed with dot or underscore will not be loaded
+				if (substr($pl_name, 0, 1) != "." && substr($pl_name, 0, 1) != "_") {
+					$pc_names[] = $pl_name;
+				}
+			}
+			closedir();
+			
+			sort($pc_names);
+			for ($j = 0; $j < count($pc_names); $j++) {
+				if (is_dir($dir . $pc_names[$j])) {
+					$core_config[$pc . 'list'][] = $pc_names[$j];
+				}
+			}
+			
+			foreach ($core_config[$pc . 'list'] as $pl) {
+				$c_fn1 = $dir . '/' . $pl . '/config.php';
+				$c_fn2 = $dir . '/' . $pl . '/fn.php';
+				if (file_exists($c_fn1) && file_exists($c_fn2)) {
+					if (function_exists('bindtextdomain') && file_exists($dir . '/' . $pl . '/language')) {
+						bindtextdomain('messages', $pl_dir . '/language/');
+						bind_textdomain_codeset('messages', 'UTF-8');
+						textdomain('messages');
+					}
+					
+					// config.php
+					include $c_fn1;
+					
+					// fn.php
+					include_once $c_fn2;
+				}
+			}
+			
+			// load common configurations
+			$c_fn1 = $core_config['apps_path']['plug'] . '/themes/common/config.php';
+			if (file_exists($c_fn1)) {
+				include $c_fn1;
+				$c_fn2 = $core_config['apps_path']['plug'] . '/themes/common/fn.php';
+				if (file_exists($c_fn2)) {
+					include_once $c_fn2;
+				}
+			}
+			
+			// load list of plugins
+			for ($i = 0; $i < count($core_config['plugins_category']); $i++) {
+				if ($pc = $core_config['plugins_category'][$i]) {
+					// get plugins
+					$dir = $core_config['apps_path']['plug'] . '/' . $pc . '/';
+					unset($core_config[$pc . 'list']);
+					unset($tmp_core_config[$pc . 'list']);
+					$fd = opendir($dir);
+					$pc_names = array();
+					while (false !== ($pl_name = readdir($fd))) {
+						// plugin's dir prefixed with dot or underscore will not be loaded
+						if (substr($pl_name, 0, 1) != "." && substr($pl_name, 0, 1) != "_") {
+							// exeptions for themes/common
+							if (!(($pc == 'themes') && ($pl_name == 'common'))) {
+								$pc_names[] = $pl_name;
+							}
+						}
+					}
+					closedir();
+					sort($pc_names);
+					for ($j = 0; $j < count($pc_names); $j++) {
+						if (is_dir($dir . $pc_names[$j])) {
+							$core_config[$pc . 'list'][] = $pc_names[$j];
+						}
+					}
+				}
+			}
+			
+			// load each plugin's config
+			$dir = $core_config['apps_path']['plug'] . '/';
+			$pcs = array(
+				'themes',
+				'language',
+				'gateway',
+				'feature' 
+			);
+			foreach ($pcs as $pc) {
+				for ($i = 0; $i < count($core_config[$pc . 'list']); $i++) {
+					$pl = $core_config[$pc . 'list'][$i];
+					$pl_dir = $dir . $pc . '/' . $pl;
+					$c_fn1 = $pl_dir . '/config.php';
+					if (file_exists($c_fn1)) {
+						if (function_exists('bindtextdomain') && file_exists($pl_dir . '/language')) {
+							bindtextdomain('messages', $pl_dir . '/language/');
+							bind_textdomain_codeset('messages', 'UTF-8');
+							textdomain('messages');
+						}
+						include $c_fn1;
+					}
+				}
+			}
+			
+			// load each plugin's libs
+			$dir = $core_config['apps_path']['plug'] . '/';
+			$pcs = array(
+				'feature',
+				'gateway' 
+			);
+			foreach ($pcs as $pc) {
+				for ($i = 0; $i < count($core_config[$pc . 'list']); $i++) {
+					$pl = $core_config[$pc . 'list'][$i];
+					$pl_dir = $dir . $pc . '/' . $pl;
+					$c_fn1 = $pl_dir . '/fn.php';
+					if (file_exists($c_fn1)) {
+						if (function_exists('bindtextdomain') && file_exists($pl_dir . '/language')) {
+							bindtextdomain('messages', $pl_dir . '/language/');
+							bind_textdomain_codeset('messages', 'UTF-8');
+							textdomain('messages');
+						}
+						include_once $c_fn1;
+					}
+				}
+			}
+			
+			// load active themes libs
+			$dir = $core_config['apps_path']['plug'] . '/';
+			$pc = 'themes';
+			$pl = core_themes_get();
+			$pl_dir = $dir . $pc . '/' . $pl;
+			$c_fn1 = $pl_dir . '/fn.php';
+			if (file_exists($c_fn1)) {
+				if (function_exists('bindtextdomain') && file_exists($pl_dir . '/language/')) {
+					bindtextdomain('messages', $plugin_dir . '/language/');
+					bind_textdomain_codeset('messages', 'UTF-8');
+					textdomain('messages');
+				}
+				include_once $c_fn1;
+			}
+			
+			// themes main overrides
+			$mains = $themes_config[core_themes_get()]['main'];
+			if (is_array($mains)) {
+				foreach ($mains as $main_key => $main_val) {
+					if ($main_key && $main_val) {
+						$core_config['main'][$main_key] = $main_val;
+					}
+				}
+			}
+			
+			// themes icons overrides
+			$icons = $themes_config[core_themes_get()]['icon'];
+			if (is_array($icons)) {
+				foreach ($icons as $icon_action => $icon_url) {
+					if ($icon_action && $icon_url) {
+						$icon_config[$icon_action] = $icon_url;
+					}
+				}
+			}
+			
+			// themes menus overrides
+			$menus = $themes_config[core_themes_get()]['menu'];
+			if (is_array($menus)) {
+				foreach ($menus as $menu_menutab => $menu_item) {
+					unset($menu_config[$menu_menutab]);
+				}
+				foreach ($menus as $menu_menutab => $menu_item) {
+					if ($menu_menutab && $menu_item) {
+						$menu_config[$menu_menutab] = $menu_item;
+					}
+				}
+			}
+			
+			if (function_exists('bindtextdomain')) {
+				bindtextdomain('messages', $core_config['apps_path']['plug'] . '/language/');
+				bind_textdomain_codeset('messages', 'UTF-8');
+				textdomain('messages');
+			}
+			
+			// commands switch
+			
+
 			switch ($COMMAND) {
 				case 'schedule':
 					playsmsd();
 					break;
-
+				
 				case 'dlrssmsd':
 					dlrd();
 					getsmsstatus();
 					break;
-
+				
 				case 'recvsmsd':
 					recvsmsd();
 					getsmsinbox();
 					break;
-
+				
 				case 'sendsmsd':
 					$queue = array();
 					$extras = '';
-					if ((int)$core_config['sendsmsd_queue'] > 0) {
+					if ((int) $core_config['sendsmsd_queue'] > 0) {
 						$extras = array(
-							'LIMIT' => (int)$core_config['sendsmsd_queue']
+							'LIMIT' => (int) $core_config['sendsmsd_queue'] 
 						);
 					}
 					$list = dba_search(_DB_PREF_ . '_tblSMSOutgoing_queue', 'queue_code', array(
-						'flag' => '0'
-					) , '', $extras);
+						'flag' => '0' 
+					), '', $extras);
 					foreach ($list as $db_row) {
 						$queue[] = 'Q_' . $db_row['queue_code'];
 					}
@@ -255,15 +451,17 @@ if (file_exists($PLAYSMS_INSTALL_PATH)) {
 						}
 					}
 					break;
-
-				default:
+				
+				default :
 					$DAEMON_LOOPING = FALSE;
 			}
 			
 			// END OF MAIN LOOP BLOCK
 			
+
 			//echo $COMMAND . " end time:" . mktime() . "\n";
 			
+
 			sleep($DAEMON_SLEEP);
 			
 			// empty buffer, yes doubled :)
@@ -272,18 +470,17 @@ if (file_exists($PLAYSMS_INSTALL_PATH)) {
 		}
 		
 		// while TRUE
-		
-		
 	}
 }
 
 // functions
 
 
-
 /**
  * Get pid for certain playsmsd process
- * @param  string $process process name
+ *
+ * @param string $process
+ *        process name
  * @return integer PID
  */
 function playsmsd_pid_get($process) {
@@ -292,6 +489,7 @@ function playsmsd_pid_get($process) {
 
 /**
  * Get pids for all playsmsd main process
+ *
  * @return array PIDs
  */
 function playsmsd_pids() {
@@ -315,6 +513,7 @@ function playsmsd_pids_show() {
 
 /**
  * Check whether or not playsmsd processes are running
+ *
  * @return boolean TRUE if all processes are running
  */
 function playsmsd_isrunning() {
@@ -377,8 +576,23 @@ function playsmsd_stop() {
 }
 
 /**
+ * Stop child scripts
+ */
+function playsmsd_stop_childs() {
+	$pids['sendqueue'] = playsmsd_pid_get('sendqueue');
+	foreach ($pids as $key => $val) {
+		if ($key && $val) {
+			echo $key . " at pid " . $val . " will be killed..\n";
+			shell_exec("kill " . $val . " >/dev/null 2>&1");
+		}
+	}
+}
+
+/**
  * Check variables and states of playsmsd
- * @param  boolean $json TRUE for json output
+ *
+ * @param boolean $json
+ *        TRUE for json output
  * @return string
  */
 function playsmsd_check($json) {
@@ -393,8 +607,8 @@ function playsmsd_check($json) {
 		'PLAYSMS_LOG' => $PLAYSMS_LOG_PATH,
 		'DAEMON_SLEEP' => $DAEMON_SLEEP,
 		'ERROR_REPORTING' => $ERROR_REPORTING,
-		'IS_RUNNING' => playsmsd_isrunning() ,
-		'PIDS' => playsmsd_pids() ,
+		'IS_RUNNING' => playsmsd_isrunning(),
+		'PIDS' => playsmsd_pids() 
 	);
 	
 	if ($json) {
@@ -414,7 +628,9 @@ function playsmsd_check($json) {
 
 /**
  * View log
- * @param  string $debug_file Save log to debug file
+ *
+ * @param string $debug_file
+ *        Save log to debug file
  */
 function playsmsd_log($debug_file = '') {
 	global $PLAYSMS_LOG_PATH;
@@ -426,7 +642,7 @@ function playsmsd_log($debug_file = '') {
 		if ($debug_file) {
 			@shell_exec('touch ' . $debug_file);
 			if (file_exists($debug_file)) {
-				$process.= '| tee ' . $debug_file;
+				$process .= '| tee ' . $debug_file;
 			}
 		}
 		

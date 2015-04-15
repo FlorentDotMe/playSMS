@@ -17,6 +17,9 @@ msgstr ""
 msgid "Buy"
 msgstr ""
 
+msgid "Compose message"
+msgstr ""
+
 msgid "Delete"
 msgstr ""
 
@@ -68,6 +71,9 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
+msgid "Logged in as"
+msgstr ""
+
 msgid "Login as"
 msgstr ""
 
@@ -80,6 +86,12 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
+msgid "Manage ACL"
+msgstr ""
+
+msgid "Manage account"
+msgstr ""
+
 msgid "Manage gateway"
 msgstr ""
 
@@ -87,6 +99,18 @@ msgid "Manage gateway and SMSC"
 msgstr ""
 
 msgid "Manage sender ID"
+msgstr ""
+
+msgid "Manage site"
+msgstr ""
+
+msgid "Manage sub-account"
+msgstr ""
+
+msgid "Manage sub-accounts"
+msgstr ""
+
+msgid "Manage subuser"
 msgstr ""
 
 msgid "Manage subusers"
@@ -144,4 +168,10 @@ msgid "User preference"
 msgstr ""
 
 msgid "View"
+msgstr ""
+
+msgid "Your credit"
+msgstr ""
+
+msgid "return"
 msgstr ""

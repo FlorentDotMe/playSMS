@@ -20,7 +20,7 @@ defined('_SECURE_') or die('Forbidden');
 
 // check permission when $uid supplied
 if ($_REQUEST['uid']) {
-	if (! auth_isadmin() && $user_config['uid'] != $_REQUEST['uid']) {
+	if (!auth_isadmin() && $user_config['uid'] != $_REQUEST['uid']) {
 		auth_block();
 	}
 	$uid = $_REQUEST['uid'];
@@ -33,7 +33,7 @@ if ($_REQUEST['id']) {
 		'registry_family' => 'sender_id' 
 	);
 	$data_sender_id = registry_search_record($search);
-	if (! auth_isadmin() && $user_config['uid'] != $data_sender_id[0]['uid']) {
+	if (!auth_isadmin() && $user_config['uid'] != $data_sender_id[0]['uid']) {
 		auth_block();
 	}
 	$uid = $data_sender_id[0]['uid'];
@@ -41,13 +41,13 @@ if ($_REQUEST['id']) {
 
 // check permission if _OP_ == toggle_status
 if (_OP_ == 'toggle_status') {
-	if (! auth_isadmin()) {
+	if (!auth_isadmin()) {
 		auth_block();
 	}
 }
 
 // default uid
-if (! $uid) {
+if (!$uid) {
 	$uid = $user_config['uid'];
 }
 
@@ -112,7 +112,7 @@ switch (_OP_) {
 		$tpl = array(
 			'name' => 'sender_id',
 			'vars' => array(
-				'ERROR' => _err_display(),
+				'DIALOG_DISPLAY' => _dialog(),
 				'SEARCH_FORM' => $search['form'],
 				'NAV_FORM' => $nav['form'],
 				'FORM_TITLE' => _('Manage sender ID'),
@@ -154,7 +154,7 @@ switch (_OP_) {
 		$tpl = array(
 			'name' => 'sender_id_add',
 			'vars' => array(
-				'ERROR' => _err_display(),
+				'DIALOG_DISPLAY' => _dialog(),
 				'FORM_TITLE' => _('Manage sender ID'),
 				'FORM_SUBTITLE' => _('Add sender ID'),
 				'ACTION_URL' => _u('index.php?app=main&inc=core_sender_id&op=sender_id_add_yes'),
@@ -162,7 +162,7 @@ switch (_OP_) {
 				'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
 				'HINT_DEFAULT' => _hint(_('Only when the sender ID is approved')),
 				'input_tag' => 'required',
-				'Sender ID' => _mandatory('Sender ID'),
+				'Sender ID' => _mandatory(_('Sender ID')),
 				'Description' => _('Description'),
 				'User' => _('User'),
 				'Approve sender ID' => _('Approve sender ID'),
@@ -185,12 +185,12 @@ switch (_OP_) {
 	case "sender_id_add_yes":
 		if (sender_id_add($uid, $c_sender_id, $c_sender_id_description, $_REQUEST['default'], $_REQUEST['approved'])) {
 			if (auth_isadmin()) {
-				$_SESSION['error_string'] = _('Sender ID description has been added') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
+				$_SESSION['dialog']['info'][] = _('Sender ID description has been added') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
 			} else {
-				$_SESSION['error_string'] = _('Sender ID has been added and waiting for approval') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
+				$_SESSION['dialog']['info'][] = _('Sender ID has been added and waiting for approval') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
 			}
 		} else {
-			$_SESSION['error_string'] = _('Sender ID is not available') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
+			$_SESSION['dialog']['info'][] = _('Sender ID is not available') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
 		}
 		
 		header("Location: " . _u('index.php?app=main&inc=core_sender_id&op=sender_id_add'));
@@ -221,7 +221,7 @@ switch (_OP_) {
 		$tpl = array(
 			'name' => 'sender_id_add',
 			'vars' => array(
-				'ERROR' => _err_display(),
+				'DIALOG_DISPLAY' => _dialog(),
 				'FORM_TITLE' => _('Manage sender ID'),
 				'FORM_SUBTITLE' => _('Edit sender ID'),
 				'ACTION_URL' => _u('index.php?app=main&inc=core_sender_id&op=sender_id_edit_yes'),
@@ -229,7 +229,7 @@ switch (_OP_) {
 				'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
 				'HINT_DEFAULT' => _hint(_('Only when the sender ID is approved')),
 				'input_tag' => 'readonly',
-				'Sender ID' => _mandatory('Sender ID'),
+				'Sender ID' => _mandatory(_('Sender ID')),
 				'Description' => _('Description'),
 				'User' => _('User'),
 				'Approve sender ID' => _('Approve sender ID'),
@@ -252,9 +252,9 @@ switch (_OP_) {
 	
 	case "sender_id_edit_yes":
 		if (sender_id_update($uid, $c_sender_id, $c_sender_id_description, $_REQUEST['default'], $_REQUEST['approved'])) {
-			$_SESSION['error_string'] = _('Sender ID description has been updated') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
+			$_SESSION['dialog']['info'][] = _('Sender ID description has been updated') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
 		} else {
-			$_SESSION['error_string'] = _('Fail to update due to invalid sender ID') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
+			$_SESSION['dialog']['info'][] = _('Fail to update due to invalid sender ID') . ' (' . _('Sender ID') . ': ' . $c_sender_id . ')';
 		}
 		
 		header("Location: " . _u('index.php?app=main&inc=core_sender_id&op=sender_id_edit&id=' . $_REQUEST['id']));
@@ -272,7 +272,7 @@ switch (_OP_) {
 			registry_update($row['uid'], 'features', 'sender_id', $items);
 		}
 		
-		$_SESSION['error_string'] = (($status == 1) ? _('Sender ID is now approved') : _('Sender ID is now disabled')) . ' (' . _('Sender ID') . ': ' . $row['registry_key'] . ')';
+		$_SESSION['dialog']['info'][] = (($status == 1) ? _('Sender ID is now approved') : _('Sender ID is now disabled')) . ' (' . _('Sender ID') . ': ' . $row['registry_key'] . ')';
 		
 		header("Location: " . _u('index.php?app=main&inc=core_sender_id&op=sender_id_list'));
 		exit();
@@ -293,7 +293,7 @@ switch (_OP_) {
 			sender_id_default_set($data_sender_id[0]['uid'], '');
 		}
 		
-		$_SESSION['error_string'] = _('Sender ID has been removed') . ' (' . _('Sender ID') . ': ' . $data_sender_id[0]['registry_key'] . ')';
+		$_SESSION['dialog']['info'][] = _('Sender ID has been removed') . ' (' . _('Sender ID') . ': ' . $data_sender_id[0]['registry_key'] . ')';
 		header("Location: " . _u($ref));
 		exit();
 		break;

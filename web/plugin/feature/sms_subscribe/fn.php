@@ -22,9 +22,9 @@ defined('_SECURE_') or die('Forbidden');
  * Implementations of hook checkavailablekeyword()
  *
  * @param $keyword checkavailablekeyword()
- *        	will insert keyword for checking to the hook here
+ *        will insert keyword for checking to the hook here
  * @return TRUE if keyword is available
- *        
+ *
  */
 function sms_subscribe_hook_checkavailablekeyword($keyword) {
 	$ok = true;
@@ -44,12 +44,12 @@ function sms_subscribe_hook_setsmsincomingaction($sms_datetime, $sms_sender, $su
 	$db_result = dba_query($db_query);
 	if ($db_row = dba_fetch_array($db_result)) {
 		if ($db_row['uid'] && $db_row['subscribe_enable']) {
-			logger_print('begin k:' . $subscribe_keyword . ' c:' . $subscribe_param, 2, 'sms_subscribe');
+			_log('begin k:' . $subscribe_keyword . ' c:' . $subscribe_param, 2, 'sms_subscribe');
 			if (sms_subscribe_handle($db_row, $sms_datetime, $sms_sender, $subscribe_keyword, $subscribe_param, $sms_receiver, $smsc, $raw_message)) {
 				$ok = true;
 			}
 			$status = ($ok ? 'handled' : 'unhandled');
-			logger_print('end k:' . $subscribe_keyword . ' c:' . $subscribe_param . ' s:' . $status, 2, 'sms_subscribe');
+			_log('end k:' . $subscribe_keyword . ' c:' . $subscribe_param . ' s:' . $status, 2, 'sms_subscribe');
 		}
 	}
 	$ret['uid'] = $db_row['uid'];
@@ -63,7 +63,7 @@ function sms_subscribe_handle($list, $sms_datetime, $sms_sender, $subscribe_keyw
 	$subscribe_keyword = strtoupper(trim($subscribe_keyword));
 	$subscribe_param = trim($subscribe_param);
 	$username = user_uid2username($c_uid);
-	logger_print("username:" . $username . " sender:" . $sms_sender . " keyword:" . $subscribe_keyword . " param:" . $subscribe_param, 3, "sms_subscribe");
+	_log("username:" . $username . " sender:" . $sms_sender . " keyword:" . $subscribe_keyword . " param:" . $subscribe_param, 3, "sms_subscribe");
 	$subscribe_accept_param = $list['subscribe_param'];
 	$subscribe_reject_param = $list['unsubscribe_param'];
 	$forward_param = $list['forward_param'];
@@ -96,9 +96,9 @@ function sms_subscribe_handle($list, $sms_datetime, $sms_sender, $subscribe_keyw
 		}
 		if (is_array($bc_to) && count($bc_to) > 0) {
 			$unicode = core_detect_unicode($message);
-			logger_print('BC sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' count:' . count($bc_to) . ' m:' . $message, 3, "sms_subscribe");
+			_log('BC sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' count:' . count($bc_to) . ' m:' . $message, 3, "sms_subscribe");
 			$message = addslashes($message);
-			list($ok, $to, $smslog_id, $queue) = sendsms_helper($username, $bc_to, $message, 'text', $unicode, $smsc);
+			list($ok, $to, $smslog_id, $queue) = sendsms_helper($username, $bc_to, $message, 'text', $unicode, $smsc, TRUE);
 			return true;
 		} else {
 			return false;
@@ -127,12 +127,15 @@ function sms_subscribe_handle($list, $sms_datetime, $sms_sender, $subscribe_keyw
 					$message = $msg1;
 					$db_query = "INSERT INTO " . _DB_PREF_ . "_featureSubscribe_member (subscribe_id,member_number,member_since) VALUES ('$subscribe_id','$sms_to','" . core_get_datetime() . "')";
 					$logged = dba_query($db_query);
-					logger_print('REG SUCCESS sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
+					_log('REG SUCCESS sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to . ' m:[' . $message . ']', 2, "sms_subscribe");
 					$ok = true;
 					break;
 				
 				default :
-					$message = '';
+					$message = $unknown_format_msg;
+					_log('Unknown format sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
+					$ok = true;
+					break;
 			}
 		} else {
 			$member = true;
@@ -150,7 +153,7 @@ function sms_subscribe_handle($list, $sms_datetime, $sms_sender, $subscribe_keyw
 						$success = 'SUCCESS';
 						$ok = true;
 					}
-					logger_print('UNREG ' . $success . ' sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
+					_log('UNREG ' . $success . ' sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to . ' m:[' . $message . ']', 2, "sms_subscribe");
 					break;
 				
 				case "ON":
@@ -158,21 +161,21 @@ function sms_subscribe_handle($list, $sms_datetime, $sms_sender, $subscribe_keyw
 				case "REG":
 				case $subscribe_accept_param:
 					$message = $already_member_msg;
-					logger_print('REG fail already a member sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
+					_log('REG fail already a member sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to . ' m:[' . $message . ']', 2, "sms_subscribe");
 					$ok = true;
 					break;
 				
 				default :
 					$message = $unknown_format_msg;
-					logger_print('Unknown format sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
+					_log('Unknown format sender:' . $sms_sender . ' keyword:' . $subscribe_keyword . ' mobile:' . $sms_to, 2, "sms_subscribe");
 					$ok = true;
 					break;
 			}
 		}
 		if ($message) {
 			$message = addslashes($message);
-			list($ok, $to, $smslog_id, $queue) = sendsms_helper($username, $sms_to, $message, 'text', '', $smsc);
-			$ok = $ok[0];
+			_log('sending reply u:' . $username . ' to:' . $sms_to . ' m:[' . $message . '] smsc:[' . $smsc . ']', 3, 'sms_subscribe_handle');
+			sendsms_helper($username, $sms_to, $message, 'text', '', $smsc, TRUE);
 		}
 	}
 	return $ok;
@@ -201,7 +204,7 @@ function sms_subscribe_hook_recvsms_intercept($sms_datetime, $sms_sender, $messa
 	$message = trim($message);
 	$hooked = false;
 	if ($keyword && $message) {
-		logger_print("recvsms_intercept k:" . $keyword . " m:" . $message, 1, "sms_subscribe");
+		_log("recvsms_intercept k:" . $keyword . " m:" . $message, 1, "sms_subscribe");
 		
 		// if not available then the keyword is exists
 		if (!sms_subscribe_hook_checkavailablekeyword($keyword)) {
@@ -215,7 +218,7 @@ function sms_subscribe_hook_recvsms_intercept($sms_datetime, $sms_sender, $messa
 				if ($list[0]['subscribe_id']) {
 					$forward_param = ($list[0]['forward_param'] ? $list[0]['forward_param'] : 'BC');
 					$sms_datetime = core_display_datetime($sms_datetime);
-					logger_print("recvsms_intercept dt:" . $sms_datetime . " s:" . $sms_sender . " r:" . $sms_receiver . " uid:" . $c_uid . " username:" . $c_username . " bc:" . $bc . " keyword:" . $keyword . " message:" . $message . " fwd:" . $forward_param, 3, "sms_subscribe");
+					_log("recvsms_intercept dt:" . $sms_datetime . " s:" . $sms_sender . " r:" . $sms_receiver . " uid:" . $c_uid . " username:" . $c_username . " bc:" . $bc . " keyword:" . $keyword . " message:" . $message . " fwd:" . $forward_param, 3, "sms_subscribe");
 					$hooked = true;
 				}
 			}
@@ -299,7 +302,7 @@ function _sms_subscribe_member_expired($subscribe, $member) {
 			_log('removed k:' . $subscribe['subscribe_keyword'] . ' member_id:' . $member['member_id'] . ' number:' . $member['member_number'], 3, '_sms_subscribe_member_expired');
 			if ($subscribe['expire_msg']) {
 				_log('SMS k:' . $subscribe['subscribe_keyword'] . ' member_id:' . $member['member_id'] . ' number:' . $member['member_number'] . ' message:[' . $subscribe['expire_msg'] . ']', 3, '_sms_subscribe_member_expired');
-				sendsms_helper($c_username, $member['member_number'], $subscribe['expire_msg'], 'text', '', $subscribe['smsc']);
+				sendsms_helper($c_username, $member['member_number'], $subscribe['expire_msg'], 'text', '', $subscribe['smsc'], TRUE);
 			}
 		}
 	}

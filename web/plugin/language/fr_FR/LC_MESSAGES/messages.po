@@ -23,6 +23,9 @@ msgstr "Bannir"
 msgid "Buy"
 msgstr "Acheter"
 
+msgid "Compose message"
+msgstr "Rédiger un message"
+
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -74,8 +77,11 @@ msgstr "Au repos"
 msgid "Import"
 msgstr "Importer"
 
-msgid "Login as"
+msgid "Logged in as"
 msgstr "Connecté en tant que"
+
+msgid "Login as"
+msgstr "Se connecter en tant que"
 
 msgid "Logout"
 msgstr "Déconnexion"
@@ -86,16 +92,32 @@ msgstr "Configuration principale"
 msgid "Manage"
 msgstr "Gérer"
 
-#, fuzzy
-msgid "Manage gateway"
-msgstr "Gérer utilisateur"
+msgid "Manage ACL"
+msgstr "Gérer ACL"
 
-#, fuzzy
+msgid "Manage account"
+msgstr "Gérer compte"
+
+msgid "Manage gateway"
+msgstr "Gérer passerelle"
+
 msgid "Manage gateway and SMSC"
-msgstr "Gérer utilisateur"
+msgstr "Gérer passerelle et SMSC"
 
 msgid "Manage sender ID"
 msgstr "Gérer sender ID"
+
+msgid "Manage site"
+msgstr "Gérer site"
+
+msgid "Manage sub-account"
+msgstr "Gérer sous-compte"
+
+msgid "Manage sub-accounts"
+msgstr "Gérer sous-comptes"
+
+msgid "Manage subuser"
+msgstr "Gérer sous-utilisateur"
 
 msgid "Manage subusers"
 msgstr "Gérer sous-utilisateurs"
@@ -153,3 +175,9 @@ msgstr "Préférence de l'utilisateur"
 
 msgid "View"
 msgstr "Afficher"
+
+msgid "Your credit"
+msgstr "Votre crédit"
+
+msgid "return"
+msgstr "retour"

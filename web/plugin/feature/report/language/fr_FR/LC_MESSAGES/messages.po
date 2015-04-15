@@ -5,17 +5,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Account has been unbanned"
+msgstr "Le compte a été réintégré"
+
+msgid "All feature messages"
+msgstr "Tous les messages de la fonctionnalité"
+
 msgid "All inbox"
 msgstr "Toutes les boîtes de réception"
 
-msgid "All incoming messages"
-msgstr "Tous les messages entrant"
-
-msgid "All outgoing messages"
-msgstr "Tous les messages sortant"
-
 msgid "All reports"
 msgstr "Tous les rapports"
+
+msgid "All sent messages"
+msgstr "Tous les messages envoyés"
 
 msgid "Amount"
 msgstr "Montant"
@@ -63,7 +66,7 @@ msgid "Failed"
 msgstr "Échec"
 
 msgid "Feature"
-msgstr "Fonction"
+msgstr "Fonctionnalité"
 
 msgid "Footer"
 msgstr "Pied de page"
@@ -71,11 +74,11 @@ msgstr "Pied de page"
 msgid "From"
 msgstr "De"
 
+msgid "Gateway"
+msgstr ""
+
 msgid "Inbox"
 msgstr "Boîte de réception"
-
-msgid "Incoming messages"
-msgstr "Messages entrant"
 
 msgid "Keyword"
 msgstr "Mot-clé"
@@ -92,11 +95,14 @@ msgstr "Message"
 msgid "My credit transactions"
 msgstr "Mes transactions de crédit"
 
+msgid "My feature messages"
+msgstr "Mes messages de la fonctionnalité"
+
 msgid "My report"
 msgstr "Mon rapport"
 
-msgid "Outgoing messages"
-msgstr "Messages sortant"
+msgid "My sent messages"
+msgstr "Mes messages envoyés"
 
 msgid "Pending"
 msgstr "En attente"
@@ -114,7 +120,7 @@ msgid "Report whose online"
 msgstr "Rapport pour les utilisateurs connectés"
 
 msgid "SMSC"
-msgstr ""
+msgstr "SMSC"
 
 msgid "Sandbox"
 msgstr "Bac à sable"
@@ -146,17 +152,14 @@ msgstr "Total"
 msgid "Transaction datetime"
 msgstr "Date de transaction"
 
-msgid "Unable to unban user"
-msgstr "Échec de la réintégration de l'utilisateur"
+msgid "Unable to unban account"
+msgstr "Échec de la réintégration du compte"
 
 msgid "User"
 msgstr "Utilisateur"
 
 msgid "User agent"
 msgstr "User agent"
-
-msgid "User has been unbanned"
-msgstr "L'utilisateur a été réintégré"
 
 msgid "Whose online"
 msgstr "Dont connecté"

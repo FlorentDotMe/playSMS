@@ -14,10 +14,10 @@ msgstr ""
 msgid "Add group"
 msgstr ""
 
-msgid "Allow broadcast from mobile"
+msgid "Anyone"
 msgstr ""
 
-msgid "Anyone"
+msgid "CSV file format"
 msgstr ""
 
 msgid "Contact has been added"
@@ -93,10 +93,16 @@ msgstr ""
 msgid "Move to"
 msgstr ""
 
+msgid "Multiple entries separated by space"
+msgstr ""
+
 msgid "Name"
 msgstr ""
 
 msgid "No changes have been made"
+msgstr ""
+
+msgid "No group"
 msgstr ""
 
 msgid "Phonebook"
@@ -106,6 +112,9 @@ msgid "Please select CSV file for phonebook entries"
 msgstr ""
 
 msgid "Please use alphanumeric only and make it short"
+msgstr ""
+
+msgid "Please use uppercase and make it short"
 msgstr ""
 
 msgid "Save"
@@ -123,7 +132,15 @@ msgstr ""
 msgid "Selected group has been deleted"
 msgstr ""
 
-msgid "Set permission for broadcasting SMS to this group from mobile phone"
+msgid "Share phonebook and allow broadcast"
+msgstr ""
+
+msgid ""
+"Share this phonebook group and set permission for broadcasting SMS to this "
+"group from mobile phone"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Unable to delete group until the group is empty"
@@ -141,11 +158,5 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-msgid "format"
-msgstr ""
-
 msgid "group"
-msgstr ""
-
-msgid "please use uppercase and make it short"
 msgstr ""

@@ -34,7 +34,7 @@ $icon_config = array(
 	'unban' => "<span class='playsms-icon glyphicon glyphicon-thumbs-up' alt='" . _('Unban') . "' title='" . _('Unban') . "'></span>",
 	'logout' => "<span class='playsms-icon glyphicon glyphicon-off' alt='" . _('Logout') . "' title='" . _('Logout') . "'></span>",
 	'reduce' => "<span class='playsms-icon glyphicon glyphicon-minus' alt='" . _('Reduce') . "' title='" . _('Reduce') . "'></span>",
-	'buy' => "<span class='playsms-icon glyphicon glyphicon-usd' alt='" . _('Buy') . "' title='" . _('Buy') . "'></span>",
+	'buy' => "<span class='playsms-icon glyphicon glyphicon-credit-card' alt='" . _('Buy') . "' title='" . _('Buy') . "'></span>",
 	'login_as' => "<span class='playsms-icon glyphicon glyphicon-adjust' alt='" . _('Login as') . "' title='" . _('Login as') . "'></span>",
 );
 
@@ -54,7 +54,7 @@ $menutab = $core_config['menutab']['my_account'];
 $menu_config[$menutab] = array(
 	array(
 		'index.php?app=main&inc=core_sendsms&op=sendsms',
-		_('Send message') ,
+		_('Compose message') ,
 		1
 	) ,
 );
@@ -83,12 +83,17 @@ if (auth_isadmin()) {
 
 	$menu_config[$menutab][] = array(
 		'index.php?app=main&inc=core_user&route=user_mgmnt&op=user_list',
-		_('Manage user') ,
+		_('Manage account') ,
+		3
+	);
+	$menu_config[$menutab][] = array(
+		'index.php?app=main&inc=core_acl&op=acl_list',
+		_('Manage ACL') ,
 		3
 	);
 	$menu_config[$menutab][] = array(
 		'index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list',
-		_('Manage subusers') ,
+		_('Manage subuser') ,
 		3
 	);
 	$menu_config[$menutab][] = array(
@@ -113,12 +118,17 @@ if (auth_isadmin()) {
 	
 	$menu_config[$menutab][] = array(
 		'index.php?app=main&inc=core_user&route=subuser_mgmnt&op=subuser_list',
-		_('Manage subusers') ,
+		_('Manage subuser') ,
 		3
 	);
 	$menu_config[$menutab][] = array(
 		'index.php?app=main&inc=core_sender_id&op=sender_id_list',
 		_('Manage sender ID') ,
+		3
+	);
+	$menu_config[$menutab][] = array(
+		'index.php?app=main&inc=core_site&op=site_config',
+		_('Manage site') ,
 		3
 	);
 } else if ($user_config['status'] == 4) {

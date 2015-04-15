@@ -17,6 +17,10 @@ msgstr ""
 msgid "Buy"
 msgstr ""
 
+#, fuzzy
+msgid "Compose message"
+msgstr "Pesan unicode"
+
 msgid "Delete"
 msgstr "Hapus"
 
@@ -75,6 +79,9 @@ msgstr ""
 msgid "Import"
 msgstr "Ekspor"
 
+msgid "Logged in as"
+msgstr ""
+
 msgid "Login as"
 msgstr ""
 
@@ -88,6 +95,14 @@ msgid "Manage"
 msgstr "Atur"
 
 #, fuzzy
+msgid "Manage ACL"
+msgstr "Atur"
+
+#, fuzzy
+msgid "Manage account"
+msgstr "Akun saya"
+
+#, fuzzy
 msgid "Manage gateway"
 msgstr "Pengaturan pengguna"
 
@@ -98,6 +113,22 @@ msgstr "Pengaturan pengguna"
 #, fuzzy
 msgid "Manage sender ID"
 msgstr "ID pengirim SMS"
+
+#, fuzzy
+msgid "Manage site"
+msgstr "Pengaturan pengguna"
+
+#, fuzzy
+msgid "Manage sub-account"
+msgstr "Pengaturan pengguna"
+
+#, fuzzy
+msgid "Manage sub-accounts"
+msgstr "Pengaturan pengguna"
+
+#, fuzzy
+msgid "Manage subuser"
+msgstr "Pengaturan pengguna"
 
 #, fuzzy
 msgid "Manage subusers"
@@ -162,3 +193,9 @@ msgstr "Preferensi"
 
 msgid "View"
 msgstr "Tampil"
+
+msgid "Your credit"
+msgstr ""
+
+msgid "return"
+msgstr ""

@@ -23,7 +23,7 @@ if (!auth_isadmin()) {
 }
 
 switch (_OP_) {
-	case "incoming" :
+	case "incoming":
 		
 		// form pre rules
 		
@@ -81,12 +81,14 @@ switch (_OP_) {
 				'input' => $select_match_sender_id,
 				'help' => _('Route to user inbox if receiver number matched with user sender ID') 
 			),
-			array(
-				'id' => 'playsms-sandbox-prefix',
-				'label' => _('Route all sandbox SMS to keyword'),
-				'input' => $input_prefix,
-				'help' => _('A valid keyword will be inserted and prefixed to the message') 
-			),
+			/**
+			 * array(
+			 * 'id' => 'playsms-sandbox-prefix',
+			 * 'label' => _('Route all sandbox SMS to keyword'),
+			 * 'input' => $input_prefix,
+			 * 'help' => _('A valid keyword will be inserted and prefixed to the message')
+			 * ),
+			 */
 			array(
 				'id' => 'playsms-route-to-users',
 				'label' => _('Route all sandbox SMS to users'),
@@ -123,7 +125,7 @@ switch (_OP_) {
 		$tpl = array(
 			'name' => 'incoming',
 			'vars' => array(
-				'ERROR' => _err_display(),
+				'DIALOG_DISPLAY' => _dialog(),
 				'PAGE_TITLE' => _('Route incoming SMS'),
 				'ACTION_URL' => _u('index.php?app=main&inc=feature_incoming&op=incoming_save'),
 				'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
@@ -146,7 +148,7 @@ switch (_OP_) {
 		_p(tpl_apply($tpl));
 		break;
 	
-	case "incoming_save" :
+	case "incoming_save":
 		
 		// form pre rules
 		
@@ -167,7 +169,7 @@ switch (_OP_) {
 		// sandbox prefix
 		$post_rules['insert_prefix'] = trim(strtoupper(core_sanitize_alphanumeric($_REQUEST['sandbox_prefix'])));
 		if ($post_rules['insert_prefix'] && checkavailablekeyword($post_rules['insert_prefix'])) {
-			$_SESSION['error_string'][] = _('Fail to insert keyword') . ' (' . _('keyword') . ': ' . $post_rules['insert_prefix'] . ')';
+			$_SESSION['dialog']['info'][] = _('Fail to insert keyword') . ' (' . _('keyword') . ': ' . $post_rules['insert_prefix'] . ')';
 			$post_rules['insert_prefix'] = '';
 		}
 		$items['sandbox_prefix'] = $post_rules['insert_prefix'];
@@ -187,9 +189,9 @@ switch (_OP_) {
 		// save to registry
 		if (count($items)) {
 			registry_update(1, 'feature', 'incoming', $items);
-			$_SESSION['error_string'][] = _('Incoming SMS route changes has been saved');
+			$_SESSION['dialog']['info'][] = _('Incoming SMS route changes has been saved');
 		} else {
-			$_SESSION['error_string'] = _('No route has been saved');
+			$_SESSION['dialog']['info'][] = _('No route has been saved');
 		}
 		
 		header("Location: " . _u('index.php?app=main&inc=feature_incoming&op=incoming'));

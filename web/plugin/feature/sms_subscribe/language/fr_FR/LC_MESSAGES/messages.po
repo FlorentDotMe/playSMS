@@ -6,6 +6,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "1 Day"
+msgstr "1 jour"
+
+msgid "1 Month"
+msgstr "1 mois"
+
+msgid "1 Week"
+msgstr "1 semaine"
+
+msgid "2 Days"
+msgstr "2 jours"
+
+msgid "2 Weeks"
+msgstr "2 semaines"
+
+msgid "6 Months"
+msgstr "6 mois"
+
 msgid "Action"
 msgstr "Action"
 
@@ -136,6 +154,9 @@ msgstr "Paramètre de désabonnement SMS"
 msgid "SMS unsubscribe reply"
 msgstr "Réponse de désabonnement SMS"
 
+msgid "SMSC"
+msgstr "SMSC"
+
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -151,8 +172,17 @@ msgstr "Envoyé"
 msgid "Status"
 msgstr "Statut"
 
+msgid "Subscribe duration"
+msgstr "Durée d'abonnement"
+
+msgid "Subscription expired reply"
+msgstr "Réponse d'abonnement expiré"
+
 msgid "Unknown format reply"
 msgstr "Réponse avec un format inconnu"
+
+msgid "Unlimited"
+msgstr "Illimité"
 
 msgid "User"
 msgstr "Utilisateur"

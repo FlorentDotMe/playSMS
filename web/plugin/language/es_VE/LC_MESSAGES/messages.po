@@ -17,6 +17,10 @@ msgstr ""
 msgid "Buy"
 msgstr ""
 
+#, fuzzy
+msgid "Compose message"
+msgstr "Enviar en Unicode"
+
 msgid "Delete"
 msgstr "Borrar"
 
@@ -74,6 +78,9 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
+msgid "Logged in as"
+msgstr ""
+
 msgid "Login as"
 msgstr ""
 
@@ -87,6 +94,14 @@ msgid "Manage"
 msgstr "Administrar"
 
 #, fuzzy
+msgid "Manage ACL"
+msgstr "Administrar"
+
+#, fuzzy
+msgid "Manage account"
+msgstr "Administrar usuario"
+
+#, fuzzy
 msgid "Manage gateway"
 msgstr "Administrar usuario"
 
@@ -97,6 +112,22 @@ msgstr "Administrar usuario"
 #, fuzzy
 msgid "Manage sender ID"
 msgstr "ID Remitente del SMS"
+
+#, fuzzy
+msgid "Manage site"
+msgstr "Administrar usuario"
+
+#, fuzzy
+msgid "Manage sub-account"
+msgstr "Administrar usuario"
+
+#, fuzzy
+msgid "Manage sub-accounts"
+msgstr "Administrar usuario"
+
+#, fuzzy
+msgid "Manage subuser"
+msgstr "Administrar usuario"
 
 #, fuzzy
 msgid "Manage subusers"
@@ -159,3 +190,9 @@ msgstr "Preferencias"
 
 msgid "View"
 msgstr "Ver"
+
+msgid "Your credit"
+msgstr ""
+
+msgid "return"
+msgstr ""

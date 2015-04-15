@@ -4,7 +4,7 @@ defined('_SECURE_') or die('Forbidden');
 // hook_sendsms
 // called by main sms sender
 // return true for success delivery
-// $smsc			: smsc 
+// $smsc		: smsc
 // $sms_sender	: sender mobile number
 // $sms_footer	: sender sms footer or sms sender ID
 // $sms_to		: destination sms number
@@ -30,9 +30,14 @@ function template_hook_sendsms($smsc, $sms_sender,$sms_footer,$sms_to,$sms_msg,$
 
 // hook_playsmsd
 // used by index.php?app=main&inc=daemon to execute custom commands
-function template_hook_playsmsd() {
+//function template_hook_playsmsd() {
+	// fetch every 60 seconds
+	//if (!core_playsmsd_timer(60)) {
+	//	return;
+	//}
+
 	// custom commands
-}
+//}
 
 // hook_getsmsstatus
 // called by index.php?app=main&inc=daemon (periodic daemon) to set sms status

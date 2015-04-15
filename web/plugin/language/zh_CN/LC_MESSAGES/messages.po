@@ -17,6 +17,10 @@ msgstr ""
 msgid "Buy"
 msgstr ""
 
+#, fuzzy
+msgid "Compose message"
+msgstr "发送为非代码信息"
+
 msgid "Delete"
 msgstr "删除"
 
@@ -74,6 +78,9 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
+msgid "Logged in as"
+msgstr ""
+
 msgid "Login as"
 msgstr ""
 
@@ -87,6 +94,14 @@ msgid "Manage"
 msgstr "管理"
 
 #, fuzzy
+msgid "Manage ACL"
+msgstr "管理"
+
+#, fuzzy
+msgid "Manage account"
+msgstr "管理用户"
+
+#, fuzzy
 msgid "Manage gateway"
 msgstr "管理用户"
 
@@ -97,6 +112,22 @@ msgstr "管理用户"
 #, fuzzy
 msgid "Manage sender ID"
 msgstr "短信发件人"
+
+#, fuzzy
+msgid "Manage site"
+msgstr "管理用户"
+
+#, fuzzy
+msgid "Manage sub-account"
+msgstr "管理用户"
+
+#, fuzzy
+msgid "Manage sub-accounts"
+msgstr "管理用户"
+
+#, fuzzy
+msgid "Manage subuser"
+msgstr "管理用户"
 
 #, fuzzy
 msgid "Manage subusers"
@@ -159,3 +190,9 @@ msgstr "偏好"
 
 msgid "View"
 msgstr "查看"
+
+msgid "Your credit"
+msgstr ""
+
+msgid "return"
+msgstr ""

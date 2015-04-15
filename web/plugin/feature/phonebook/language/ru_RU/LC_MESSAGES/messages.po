@@ -9,6 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
 msgid "Action"
 msgstr "Действие"
@@ -19,11 +20,10 @@ msgstr "Добавить контакт"
 msgid "Add group"
 msgstr "Добавить групу"
 
-#, fuzzy
-msgid "Allow broadcast from mobile"
-msgstr "Массовая рассылка"
-
 msgid "Anyone"
+msgstr "Кому угодно"
+
+msgid "CSV file format"
 msgstr ""
 
 msgid "Contact has been added"
@@ -36,7 +36,7 @@ msgid "Contacts have been imported"
 msgstr "Контакты импортированы"
 
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgid "Edit contact"
 msgstr "Редактировать контакт"
@@ -67,13 +67,14 @@ msgstr "Код группы добавлен"
 
 msgid "Group code may be used to broadcast SMS to this group"
 msgstr ""
+"Код группы может быть использован для рассылки по входящим в неё контактам"
 
 msgid "Group has been edited"
 msgstr "Группа изменена"
 
 msgid ""
 "Group has been edited but unable to set broadcast from members or anyone"
-msgstr ""
+msgstr "Группа была отредактирована, но не удалось поменять уровень видимости"
 
 msgid "Group name"
 msgstr "Имя группы"
@@ -88,15 +89,18 @@ msgid "Import confirmation"
 msgstr "Подтверждение импорта"
 
 msgid "Me only"
-msgstr ""
+msgstr "Только мне"
 
 msgid "Members"
-msgstr ""
+msgstr "Пользователям"
 
 msgid "Mobile"
 msgstr "Мобильный"
 
 msgid "Move to"
+msgstr "Переместить в"
+
+msgid "Multiple entries separated by space"
 msgstr ""
 
 msgid "Name"
@@ -105,21 +109,28 @@ msgstr "Имя"
 msgid "No changes have been made"
 msgstr "Нет изменений"
 
+#, fuzzy
+msgid "No group"
+msgstr "группа"
+
 msgid "Phonebook"
 msgstr "Контакты"
 
 msgid "Please select CSV file for phonebook entries"
 msgstr "Выберите CSV файл контактов"
 
-#, fuzzy
 msgid "Please use alphanumeric only and make it short"
+msgstr "придумайте короткое слово в верхнем регистре"
+
+#, fuzzy
+msgid "Please use uppercase and make it short"
 msgstr "придумайте короткое слово в верхнем регистре"
 
 msgid "Save"
 msgstr "Сохранить"
 
 msgid "Select"
-msgstr ""
+msgstr "Выберите"
 
 msgid "Selected contact has been deleted"
 msgstr "Выбранные контакты удалены"
@@ -130,7 +141,16 @@ msgstr "Выбранные контакты перемещены в новую �
 msgid "Selected group has been deleted"
 msgstr "Выбранные группы удалены"
 
-msgid "Set permission for broadcasting SMS to this group from mobile phone"
+msgid "Share phonebook and allow broadcast"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"Share this phonebook group and set permission for broadcasting SMS to this "
+"group from mobile phone"
+msgstr "Разрешить рассылку группе с мобильного телефона"
+
+msgid "Tags"
 msgstr ""
 
 msgid "Unable to delete group until the group is empty"
@@ -148,11 +168,5 @@ msgstr "Необходимо заполнить обязательные пол�
 msgid "code"
 msgstr "код"
 
-msgid "format"
-msgstr "формат"
-
 msgid "group"
 msgstr "группа"
-
-msgid "please use uppercase and make it short"
-msgstr "придумайте короткое слово в верхнем регистре"

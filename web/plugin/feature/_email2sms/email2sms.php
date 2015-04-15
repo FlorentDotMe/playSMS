@@ -60,12 +60,12 @@ switch (_OP_) {
 		$tpl = array(
 			'name' => 'email2sms',
 			'vars' => array(
-				'ERROR' => _err_display(),
+				'DIALOG_DISPLAY' => _dialog(),
 				'FORM_TITLE' => _('Manage email to SMS'),
 				'ACTION_URL' => _u('index.php?app=main&inc=feature_email2sms&op=email2sms_save'),
 				'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
 				'HINT_PASSWORD' => _hint(_('Fill the password field to change password')),
-				'PIN for email to SMS' => _mandatory('PIN for email to SMS'),
+				'PIN for email to SMS' => _mandatory(_('PIN for email to SMS')),
 				'Enable email to SMS' => _('Enable email to SMS'),
 				'Check email sender' => _('Check email sender'),
 				'Email protocol' => _('Email protocol'),
@@ -98,8 +98,8 @@ switch (_OP_) {
 		if ($pin) {
 			$continue = TRUE;
 		} else {
-			$_SESSION['error_string'][] = _('PIN is empty');
-			$_SESSION['error_string'][] = _('Fail to save email to SMS configuration');
+			$_SESSION['dialog']['info'][] = _('PIN is empty');
+			$_SESSION['dialog']['info'][] = _('Fail to save email to SMS configuration');
 		}
 		
 		if ($continue) {
@@ -122,10 +122,10 @@ switch (_OP_) {
 			
 			if ($_REQUEST['enable']) {
 				$enabled = 'enabled';
-				$_SESSION['error_string'] = _('Email to SMS configuration has been saved and enabled');
+				$_SESSION['dialog']['info'][] = _('Email to SMS configuration has been saved and enabled');
 			} else {
 				$enabled = 'disabled';
-				$_SESSION['error_string'] = _('Email to SMS configuration has been saved but disabled');
+				$_SESSION['dialog']['info'][] = _('Email to SMS configuration has been saved but disabled');
 			}
 			_log($enabled . ' uid:' . $user_config['uid'] . ' u:' . $_REQUEST['username'] . ' server:' . $_REQUEST['server'], 2, 'email2sms');
 		}

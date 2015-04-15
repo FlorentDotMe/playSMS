@@ -1,13 +1,16 @@
+msgid "Account has been unbanned"
+msgstr ""
+
+msgid "All feature messages"
+msgstr ""
+
 msgid "All inbox"
 msgstr ""
 
-msgid "All incoming messages"
-msgstr ""
-
-msgid "All outgoing messages"
-msgstr ""
-
 msgid "All reports"
+msgstr ""
+
+msgid "All sent messages"
 msgstr ""
 
 msgid "Amount"
@@ -64,10 +67,10 @@ msgstr ""
 msgid "From"
 msgstr ""
 
-msgid "Inbox"
+msgid "Gateway"
 msgstr ""
 
-msgid "Incoming messages"
+msgid "Inbox"
 msgstr ""
 
 msgid "Keyword"
@@ -85,10 +88,13 @@ msgstr ""
 msgid "My credit transactions"
 msgstr ""
 
+msgid "My feature messages"
+msgstr ""
+
 msgid "My report"
 msgstr ""
 
-msgid "Outgoing messages"
+msgid "My sent messages"
 msgstr ""
 
 msgid "Pending"
@@ -139,16 +145,13 @@ msgstr ""
 msgid "Transaction datetime"
 msgstr ""
 
-msgid "Unable to unban user"
+msgid "Unable to unban account"
 msgstr ""
 
 msgid "User"
 msgstr ""
 
 msgid "User agent"
-msgstr ""
-
-msgid "User has been unbanned"
 msgstr ""
 
 msgid "Whose online"

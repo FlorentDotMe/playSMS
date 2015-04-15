@@ -14,11 +14,11 @@ msgstr "Ajouter contact"
 msgid "Add group"
 msgstr "Ajouter groupe"
 
-msgid "Allow broadcast from mobile"
-msgstr "Autoriser broadcast depuis mobile"
-
 msgid "Anyone"
 msgstr "Tous"
+
+msgid "CSV file format"
+msgstr "Format de fichier CSV"
 
 msgid "Contact has been added"
 msgstr "Le contact a été ajouté."
@@ -70,7 +70,7 @@ msgid ""
 "Group has been edited but unable to set broadcast from members or anyone"
 msgstr ""
 "Le groupe a été modifié, mais impossible de régler le broadcast depuis les "
-"membres ou n'importe qui"
+"membres ou qui que ce soit"
 
 msgid "Group name"
 msgstr "Nom du groupe"
@@ -96,11 +96,17 @@ msgstr "Mobile"
 msgid "Move to"
 msgstr "Déplacer vers"
 
+msgid "Multiple entries separated by space"
+msgstr "Plusieurs entrées séparées par un espace"
+
 msgid "Name"
 msgstr "Nom"
 
 msgid "No changes have been made"
 msgstr "Aucune modification apportée"
+
+msgid "No group"
+msgstr "Aucun groupe"
 
 msgid "Phonebook"
 msgstr "Carnet d'adresses"
@@ -111,6 +117,9 @@ msgstr ""
 
 msgid "Please use alphanumeric only and make it short"
 msgstr "Veuillez utiliser uniquement alphanumérique et soyez bref"
+
+msgid "Please use uppercase and make it short"
+msgstr "Veuillez utiliser des majuscules et soyez bref"
 
 msgid "Save"
 msgstr "Enregistrer"
@@ -127,10 +136,18 @@ msgstr "Le contact sélectionné a été déplacé dans le nouveau groupe"
 msgid "Selected group has been deleted"
 msgstr "Le groupe sélectionné a été supprimé"
 
-msgid "Set permission for broadcasting SMS to this group from mobile phone"
+msgid "Share phonebook and allow broadcast"
+msgstr "Partager le carnet d'adresses et autoriser le broadcast"
+
+msgid ""
+"Share this phonebook group and set permission for broadcasting SMS to this "
+"group from mobile phone"
 msgstr ""
-"Régler l'autorisation de faire un broadcast SMS vers ce groupe depuis un "
-"téléphone portable"
+"Partager ce carnet d'adresses et donner l'autorisation de faire un broadcast "
+"SMS vers ce groupe depuis un téléphone portable"
+
+msgid "Tags"
+msgstr "Tags"
 
 msgid "Unable to delete group until the group is empty"
 msgstr "Le groupe ne peut pas être supprimé tant qu'il n'est pas vide."
@@ -147,11 +164,5 @@ msgstr "Vous devez saisir tous les champs obligatoires"
 msgid "code"
 msgstr "code"
 
-msgid "format"
-msgstr "format"
-
 msgid "group"
 msgstr "group"
-
-msgid "please use uppercase and make it short"
-msgstr "Veuillez utiliser des majuscules et soyez bref"

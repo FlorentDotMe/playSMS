@@ -24,7 +24,7 @@ if (! auth_isvalid()) {
 
 switch (_OP_) {
 	case 'list':
-		$content = '<h2>' . _('Send from file') . '</h2><p />';
+		$content = _dialog().'<h2>' . _('Send from file') . '</h2><p />';
 		if (auth_isadmin()) {
 			$info_format = _('destination number, message, username');
 		} else {
@@ -40,21 +40,21 @@ switch (_OP_) {
 							<p>" . _('Please select CSV file') . "</p>
 							<p><input type=\"file\" name=\"fncsv\"></p>
 							<p class=help-block>" . _('CSV file format') . " : " . $info_format . "</p>
+							<p><input type=checkbox name=fncsv_dup value=1 checked> "._('Prevent duplicates')."</p>
 							<p><input type=\"submit\" value=\"" . _('Upload file') . "\" class=\"button\"></p>
 							</form>
 						</td>
 					</tr>
 				</tbody>
 			</table>";
-		if ($err = $_SESSION['error_string']) {
-			_p("<div class=error_string>$err</div>");
-		}
 		_p($content);
 		break;
 	case 'upload_confirm':
 		$filename = $_FILES['fncsv']['name'];
 		$fn = $_FILES['fncsv']['tmp_name'];
 		$fs = $_FILES['fncsv']['size'];
+		$nodups = $_POST['fncsv_dup'];
+		$all_numbers = array();
 		$row = 0;
 		$valid = 0;
 		$invalid = 0;
@@ -64,6 +64,7 @@ switch (_OP_) {
 				$continue = true;
 				while ((($data = fgetcsv($fd, $fs, ',')) !== FALSE) && $continue) {
 					$row++;
+					$dup = false;
 					$sms_to = trim($data[0]);
 					$sms_msg = trim($data[1]);
 					if (auth_isadmin()) {
@@ -74,7 +75,11 @@ switch (_OP_) {
 						$uid = $user_config['uid'];
 						$data[2] = $sms_username;
 					}
-					if ($sms_to && $sms_msg && $uid) {
+					if ($nodups) {
+                                              if (in_array($sms_to,$all_numbers)) $dup = true;
+					}
+					if ($sms_to && $sms_msg && $uid && !$dup) {
+                                                $all_numbers[] = $sms_to;
 						$db_query = "INSERT INTO " . _DB_PREF_ . "_featureSendfromfile (uid,sid,sms_datetime,sms_to,sms_msg,sms_username) ";
 						$db_query .= "VALUES ('$uid','$sid','" . core_get_datetime() . "','$sms_to','" . addslashes($sms_msg) . "','$sms_username')";
 						if ($db_result = dba_insert_id($db_query)) {
@@ -95,7 +100,7 @@ switch (_OP_) {
 				}
 			}
 		} else {
-			$_SESSION['error_string'] = _('Invalid CSV file');
+			$_SESSION['dialog']['info'][] = _('Invalid CSV file');
 			header("Location: " . _u('index.php?app=main&inc=feature_sendfromfile&op=list'));
 			exit();
 			break;
@@ -174,12 +179,12 @@ switch (_OP_) {
 		if ($sid = $_REQUEST['sid']) {
 			$db_query = "DELETE FROM " . _DB_PREF_ . "_featureSendfromfile WHERE sid='$sid'";
 			if ($db_result = dba_affected_rows($db_query)) {
-				$_SESSION['error_string'] = _('Send from file has been cancelled');
+				$_SESSION['dialog']['info'][] = _('Send from file has been cancelled');
 			} else {
-				$_SESSION['error_string'] = _('Fail to remove cancelled entries from database');
+				$_SESSION['dialog']['info'][] = _('Fail to remove cancelled entries from database');
 			}
 		} else {
-			$_SESSION['error_string'] = _('Invalid session ID');
+			$_SESSION['dialog']['info'][] = _('Invalid session ID');
 		}
 		header("Location: " . _u('index.php?app=main&inc=feature_sendfromfile&op=list'));
 		exit();
@@ -202,9 +207,9 @@ switch (_OP_) {
 			}
 			$db_query = "DELETE FROM " . _DB_PREF_ . "_featureSendfromfile WHERE sid='$sid'";
 			$db_result = dba_affected_rows($db_query);
-			$_SESSION['error_string'] = _('SMS has been sent to valid numbers in uploaded file');
+			$_SESSION['dialog']['info'][] = _('SMS has been sent to valid numbers in uploaded file');
 		} else {
-			$_SESSION['error_string'] = _('Invalid session ID');
+			$_SESSION['dialog']['info'][] = _('Invalid session ID');
 		}
 		header("Location: " . _u('index.php?app=main&inc=feature_sendfromfile&op=list'));
 		exit();
