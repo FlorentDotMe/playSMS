@@ -136,7 +136,7 @@ switch (_OP_) {
                 'chars' => _('chars'),
                 'SMS' => _('SMS'),
                 'DataSelect' => $list_sender,
-                'ERROR' => $error_content,
+                'DIALOG_DISPLAY' => _dialog(),
                 'HTTP_PATH_BASE' => _HTTP_PATH_BASE_,
                 'HTTP_PATH_THEMES' => _HTTP_PATH_THEMES_,
                 'MAX_SMS_LENGTH' => $core_config['main']['max_sms_length'] - strlen($user_config['footer']),
@@ -244,14 +244,8 @@ switch (_OP_) {
         }
 
         // Manage errors
-        $error_content = '';
-        if ($err = $_SESSION['error_string']) {
-            $error_content = "<div class=error_string>$err</div>";
-        }
-        $tpl['vars']['ERROR'] = $error_content;
         $tpl['name'] = 'conversation';
-        $content = tpl_apply($tpl);
-        _p($content);
+        _p(tpl_apply($tpl));
         break;
 
     case 'actions':
@@ -286,7 +280,7 @@ switch (_OP_) {
                         }
                     }
                 }
-                $_SESSION['error_string'] = _('Selected message has been deleted');
+                $_SESSION['dialog']['info'][] = _('Selected message has been deleted');
                 break;
 
             case 'sendsms':
@@ -317,17 +311,29 @@ switch (_OP_) {
                 }
                 
                 if ($sms_to[0] && $message) {
-                    
-                    list($ok, $to, $smslog_id, $queue, $counts, $sms_count, $sms_failed) = sendsms_helper($user_config['username'], $sms_to, $message, $sms_type, $unicode, '', $nofooter, $sms_footer, $sms_sender, $sms_schedule, $reference_id);
-                    
-                    $_SESSION['error_string'] = _('Your message has been delivered to queue') . " (" . _('queued') . ":" . (int) $sms_count . " " . _('failed') . ":" . (int) $sms_failed . ")";
+
+                    list($ok, $to, $smslog_id, $queue, $counts, $sms_count, $sms_failed, $error_strings) = sendsms_helper($user_config['username'], $sms_to, $message, $sms_type, $unicode, '', $nofooter, $sms_footer, $sms_sender, $sms_schedule, $reference_id);
+
+                    if (!$sms_count && $sms_failed) {
+                        $_SESSION['dialog']['danger'][] = _('Fail to send message to all destinations') . " (" . _('queued') . ":" . (int) $sms_count . " " . _('failed') . ":" . (int) $sms_failed . ")";
+                    } else if ($sms_count && $sms_failed) {
+                        $_SESSION['dialog']['danger'][] = _('Your message has been delivered to some of the destinations') . " (" . _('queued') . ":" . (int) $sms_count . " " . _('failed') . ":" . (int) $sms_failed . ")";
+                    } else if ($sms_count && !$sms_failed) {
+                        $_SESSION['dialog']['info'][] = _('Your message has been delivered to queue') . " (" . _('queued') . ":" . (int) $sms_count . " " . _('failed') . ":" . (int) $sms_failed . ")";
+                    } else {
+                        if (!is_array($error_strings)) {
+                            $_SESSION['dialog']['danger'][] = $error_strings;
+                        } else {
+                            $_SESSION['dialog']['danger'][] = _('System error has occured');
+                        }
+                    }
                 } else {
-                    $_SESSION['error_string'] = _('You must select receiver and your message should not be empty');
+                    $_SESSION['dialog']['danger'][] = _('You must select receiver and your message should not be empty');
                 }
-                break;
         }
         $ref = $nav['url'] . '&page=' . $nav['page'] . '&nav=' . $nav['nav'];
         header("Location: " . _u($ref));
+        exit();
         break;
     
 }

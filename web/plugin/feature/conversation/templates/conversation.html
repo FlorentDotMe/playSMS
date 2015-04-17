@@ -1,5 +1,5 @@
-<script type="text/javascript"
-    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.min.js"></script>
+<!--<script type="text/javascript"
+    src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery-2.0.3.min.js"></script>
 <script type="text/javascript"
     src="{{ HTTP_PATH_THEMES }}/common/jscss/jquery.tablesorter.min.js"></script>
 <link rel="stylesheet"
@@ -9,7 +9,7 @@
 <script type="text/javascript"
     src="http://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 <link rel="stylesheet"
-    href="http://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+    href="http://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />-->
 <script type="text/javascript">
     $(document).ready(function() {
         $("#msg_sendto").select2({
@@ -41,7 +41,7 @@
         $("#message").focus();
     }
 </script>
-{{ ERROR }}
+{{ DIALOG_DISPLAY }}
 <h2>{{ Conversations }}</h2>
 <form id="fm_sendsms" name="fm_sendsms" action="index.php?app=main&inc=feature_conversation&route=conversation&op=actions" method=post>
 {{ CSRF_FORM }}
