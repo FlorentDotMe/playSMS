@@ -1,12 +1,20 @@
 <?php
 defined('_SECURE_') or die('Forbidden');
 
-$plugin_config['smstools']['name'] = "smstools";
-$plugin_config['smstools']['spool_dir'] = "/var/spool/sms";
-$plugin_config['smstools']['spool_bak'] = "/var/spool/smsbackup";
+// get gammu config from registry
+$data = registry_search(0, 'gateway', 'smstools');
+
+$plugin_config['smstools']['name'] = 'smstools';
+$plugin_config['smstools']['default_queue'] = trim(core_sanitize_path($data['gateway']['smstools']['default_queue']));
+if (!$plugin_config['smstools']['default_queue']) {
+	$plugin_config['smstools']['default_queue'] = "/var/spool/sms";
+}
 
 // smsc configuration
-$plugin_config['smstools']['_smsc_config_'] = array();
+$plugin_config['smstools']['_smsc_config_'] = array(
+	'sms_receiver' => _('Receiver number'),
+	'queue' => _('Queue directory') 
+);
 
 // insert to left menu array
 //if (isadmin()) {

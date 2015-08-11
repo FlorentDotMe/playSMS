@@ -1,6 +1,6 @@
 # INSTALL
 
-This document explains about how to install and setup playSMS version **1.0-rc8**
+This document explains about how to install and setup playSMS version **1.1**
 
 
 ## Requirements
@@ -61,9 +61,9 @@ Install playSMS using install script `install-playsms.sh`
 1.  Extract playSMS package and go there (For example in /usr/local/src)
 
     ```
-    tar -zxf playsms-1.0.0.tar.gz -C /usr/local/src
+    tar -zxf playsms-1.1.tar.gz -C /usr/local/src
     ls -l /usr/local/src/
-    cd /usr/local/src/playsms-1.0.0/
+    cd /usr/local/src/playsms-1.1/
     ```
 
 2.  Copy install.conf.dist to install.conf and edit install.conf
@@ -130,9 +130,9 @@ Install playSMS by following step-by-step:
 1.  Extract playSMS package and go there (For example in /usr/local/src)
 
     ```
-    tar -zxf playsms-1.0.0.tar.gz -C /usr/local/src
+    tar -zxf playsms-1.1.tar.gz -C /usr/local/src
     ls -l /usr/local/src/
-    cd /usr/local/src/playsms-1.0.0/
+    cd /usr/local/src/playsms-1.1/
     ```
 
 2.  Run getcomposer.sh
@@ -143,7 +143,7 @@ Install playSMS by following step-by-step:
 
     You may see the following warning, that can safely be ignored:
     ```
-    Warning: Ambiguous class resolution, "PEAR_ErrorStack" was found in both "/usr/local/src/playsms-1.0.0/web/lib/composer/vendor/pear/pear/PEAR/ErrorStack.php" and "/usr/local/src/playsms-1.0.0/web/lib/composer/vendor/pear/pear/PEAR/ErrorStack5.php", the first will be used.
+    Warning: Ambiguous class resolution, "PEAR_ErrorStack" was found in both "/usr/local/src/playsms-1.1/web/lib/composer/vendor/pear/pear/PEAR/ErrorStack.php" and "/usr/local/src/playsms-1.1/web/lib/composer/vendor/pear/pear/PEAR/ErrorStack5.php", the first will be used.
     ```
 
 3.  Create playSMS web root, log, lib and set ownership to user www-data or web server user
@@ -251,9 +251,4 @@ Note:
 
 Next, choose a gateway.
 
-If you have GSM modem and plan to use it with playSMS, please continue to follow
-instructions in `INSTALL_SMSSERVERTOOLS` to use SMS Server Tools (smstools3) as
-your gateway module, or follow `INSTALL_KANNEL` if you want to use Kannel.
-
-Gnokii and Gammu also supported, please follow `INSTALL_GNOKII` if you want to use
-Gnokii as your gateway module, or `INSTALL_GAMMU` if you want to use Gammu.
+Read more information and tutorial in [playSMS documentation](http://playsms.org/documentation/).

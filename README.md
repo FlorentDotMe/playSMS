@@ -1,16 +1,16 @@
 # README
 
-playSMS version **1.0-rc8**
+playSMS version **1.1**
 
-Release date **150415**
+Release date **150711**
 
 Official project website:
 
 * http://playsms.org
 
-Official playSMS user group forum and mailing list:
+Official playSMS forum:
 
-* http://groups.google.com/group/playsmsusergroup
+* http://forum.playsms.org
 
 Official playSMS Facebook page:
 
@@ -46,7 +46,7 @@ communication tools
 * SMS sync to utilize SMSSync app from http://smssync.ushahidi.com
 * Blacklist, stoplist and firewall plugin for SMS services protections
 * Create your own features, tools, themes and gateway modules as a plugin
-* Supports Gammu, Gnokii, Kannel, SMS Server Tools, Msgtoolbox, Uplink, Nexmo, Twilio, Infobip and Clickatell
+* Supports Gammu, Kannel, SMS Server Tools, Uplink, Nexmo, Twilio, Infobip and Clickatell
 * Supports multiple active SMSC
 * Supports simulation gateway for testing incoming and outgoing SMS
 * Route outgoing SMS by prefix

@@ -19,14 +19,14 @@
 defined('_SECURE_') or die('Forbidden');
 
 /**
- * Implementations of hook checkavailablekeyword()
+ * Implementations of hook keyword_isavail()
  *
- * @param $keyword checkavailablekeyword()
+ * @param $keyword keyword_isavail()
  *        will insert keyword for checking to the hook here
  * @return TRUE if keyword is available
  *
  */
-function sms_subscribe_hook_checkavailablekeyword($keyword) {
+function sms_subscribe_hook_keyword_isavail($keyword) {
 	$ok = true;
 	$db_query = "SELECT subscribe_id FROM " . _DB_PREF_ . "_featureSubscribe WHERE subscribe_keyword='$keyword'";
 	if ($db_result = dba_num_rows($db_query)) {
@@ -36,9 +36,9 @@ function sms_subscribe_hook_checkavailablekeyword($keyword) {
 }
 
 /*
- * Implementations of hook setsmsincomingaction() @param $sms_datetime date and time when incoming sms inserted to playsms @param $sms_sender sender on incoming sms @param $subscribe_keyword check if keyword is for sms_subscribe @param $subscribe_param get parameters from incoming sms @param $sms_receiver receiver number that is receiving incoming sms @return $ret array of keyword owner uid and status, TRUE if incoming sms handled
+ * Implementations of hook recvsms_process() @param $sms_datetime date and time when incoming sms inserted to playsms @param $sms_sender sender on incoming sms @param $subscribe_keyword check if keyword is for sms_subscribe @param $subscribe_param get parameters from incoming sms @param $sms_receiver receiver number that is receiving incoming sms @return $ret array of keyword owner uid and status, TRUE if incoming sms handled
  */
-function sms_subscribe_hook_setsmsincomingaction($sms_datetime, $sms_sender, $subscribe_keyword, $subscribe_param = '', $sms_receiver = '', $smsc = '', $raw_message = '') {
+function sms_subscribe_hook_recvsms_process($sms_datetime, $sms_sender, $subscribe_keyword, $subscribe_param = '', $sms_receiver = '', $smsc = '', $raw_message = '') {
 	$ok = false;
 	$db_query = "SELECT * FROM " . _DB_PREF_ . "_featureSubscribe WHERE subscribe_keyword='$subscribe_keyword'";
 	$db_result = dba_query($db_query);
@@ -207,7 +207,7 @@ function sms_subscribe_hook_recvsms_intercept($sms_datetime, $sms_sender, $messa
 		_log("recvsms_intercept k:" . $keyword . " m:" . $message, 1, "sms_subscribe");
 		
 		// if not available then the keyword is exists
-		if (!sms_subscribe_hook_checkavailablekeyword($keyword)) {
+		if (!sms_subscribe_hook_keyword_isavail($keyword)) {
 			$c_uid = user_mobile2uid($sms_sender);
 			$c_username = user_uid2username($c_uid);
 			if ($c_uid && $c_username) {

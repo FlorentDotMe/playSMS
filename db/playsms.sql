@@ -203,7 +203,9 @@ CREATE TABLE `playsms_featureCustom` (
   `c_timestamp` bigint(20) NOT NULL DEFAULT '0',
   `custom_id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL DEFAULT '0',
-  `custom_keyword` varchar(10) NOT NULL DEFAULT '',
+  `service_name` varchar(255) NOT NULL DEFAULT '',
+  `custom_keyword` varchar(255) NOT NULL DEFAULT '',
+  `sms_receiver` varchar(20) NOT NULL DEFAULT '',
   `custom_url` text NOT NULL,
   `custom_return_as_reply` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`custom_id`)
@@ -829,30 +831,6 @@ INSERT INTO `playsms_gatewayClickatell_config` VALUES (0,'clickatell','123456','
 UNLOCK TABLES;
 
 --
--- Table structure for table `playsms_gatewayGnokii_config`
---
-
-DROP TABLE IF EXISTS `playsms_gatewayGnokii_config`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `playsms_gatewayGnokii_config` (
-  `c_timestamp` bigint(20) NOT NULL DEFAULT '0',
-  `cfg_name` varchar(20) NOT NULL DEFAULT 'gnokii',
-  `cfg_path` varchar(250) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `playsms_gatewayGnokii_config`
---
-
-LOCK TABLES `playsms_gatewayGnokii_config` WRITE;
-/*!40000 ALTER TABLE `playsms_gatewayGnokii_config` DISABLE KEYS */;
-INSERT INTO `playsms_gatewayGnokii_config` VALUES (0,'gnokii','/var/spool/playsms');
-/*!40000 ALTER TABLE `playsms_gatewayGnokii_config` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `playsms_gatewayInfobip_apidata`
 --
 
@@ -907,61 +885,6 @@ LOCK TABLES `playsms_gatewayInfobip_config` WRITE;
 /*!40000 ALTER TABLE `playsms_gatewayInfobip_config` DISABLE KEYS */;
 INSERT INTO `playsms_gatewayInfobip_config` VALUES (0,'infobip','','','','http://api.infobip.com/api/v3',0,'','','1');
 /*!40000 ALTER TABLE `playsms_gatewayInfobip_config` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `playsms_gatewayMsgtoolbox`
---
-
-DROP TABLE IF EXISTS `playsms_gatewayMsgtoolbox`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `playsms_gatewayMsgtoolbox` (
-  `c_timestamp` bigint(20) NOT NULL DEFAULT '0',
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `local_smslog_id` int(11) NOT NULL DEFAULT '0',
-  `remote_smslog_id` int(11) NOT NULL DEFAULT '0',
-  `status` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `playsms_gatewayMsgtoolbox`
---
-
-LOCK TABLES `playsms_gatewayMsgtoolbox` WRITE;
-/*!40000 ALTER TABLE `playsms_gatewayMsgtoolbox` DISABLE KEYS */;
-/*!40000 ALTER TABLE `playsms_gatewayMsgtoolbox` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `playsms_gatewayMsgtoolbox_config`
---
-
-DROP TABLE IF EXISTS `playsms_gatewayMsgtoolbox_config`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `playsms_gatewayMsgtoolbox_config` (
-  `c_timestamp` bigint(20) NOT NULL DEFAULT '0',
-  `cfg_name` varchar(20) NOT NULL DEFAULT 'msgtoolbox',
-  `cfg_url` varchar(250) DEFAULT NULL,
-  `cfg_route` varchar(5) DEFAULT NULL,
-  `cfg_username` varchar(100) DEFAULT NULL,
-  `cfg_password` varchar(100) DEFAULT NULL,
-  `cfg_module_sender` varchar(20) DEFAULT NULL,
-  `cfg_datetime_timezone` varchar(30) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `playsms_gatewayMsgtoolbox_config`
---
-
-LOCK TABLES `playsms_gatewayMsgtoolbox_config` WRITE;
-/*!40000 ALTER TABLE `playsms_gatewayMsgtoolbox_config` DISABLE KEYS */;
-INSERT INTO `playsms_gatewayMsgtoolbox_config` VALUES (0,'msgtoolbox','http://serverX.msgtoolbox.com/api/current/send/message.php','1','playsms','password','playSMS','');
-/*!40000 ALTER TABLE `playsms_gatewayMsgtoolbox_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1413,7 +1336,7 @@ CREATE TABLE `playsms_tblRegistry` (
 
 LOCK TABLES `playsms_tblRegistry` WRITE;
 /*!40000 ALTER TABLE `playsms_tblRegistry` DISABLE KEYS */;
-INSERT INTO `playsms_tblRegistry` VALUES (0,1,1,'core','config','playsms_version','1.0-rc7'),(1404003471,2,1,'core','main_config','web_title','playSMS'),(1404003471,3,1,'core','main_config','email_service','noreply@playsms.org'),(1404003471,4,1,'core','main_config','email_footer','Powered by playSMS'),(1404003471,5,1,'core','main_config','main_website_name','playSMS'),(1404003471,6,1,'core','main_config','main_website_url','http://www.playsms.org'),(1404003471,7,1,'core','main_config','gateway_number','1234'),(1404003471,8,1,'core','main_config','gateway_timezone','+0700'),(1404003471,9,1,'core','main_config','default_rate','0'),(1404003471,10,1,'core','main_config','gateway_module','dev'),(1404003471,11,1,'core','main_config','themes_module','default'),(1404003471,12,1,'core','main_config','language_module','en_US'),(1404003471,13,1,'core','main_config','sms_max_count','3'),(1404003471,14,1,'core','main_config','default_credit','0'),(1404003471,15,1,'core','main_config','enable_register','0'),(1404003471,16,1,'core','main_config','enable_forgot','1'),(0,17,1,'core','main_config','allow_custom_sender','0'),(0,18,1,'core','main_config','allow_custom_footer','0'),(1404030329,19,1,'auth','login_session','81b576f23d180b087995eb4c1bf5a3ec','{\"ip\":\"127.0.0.1\",\"last_update\":\"2014-06-29 15:25:29\",\"http_user_agent\":\"Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36\",\"sid\":\"ko3kn1romdhqu5a1rrssbnph84\",\"uid\":\"1\"}'),(1404003471,20,1,'core','main_config','default_user_status','3'),(1404003471,21,1,'core','main_config','enable_logo','1'),(1404003472,22,1,'core','main_config','logo_url','plugin/themes/common/images/playSMS_logo_full.png'),(1404003472,23,1,'core','main_config','logo_replace_title','1'),(1404003472,24,1,'core','main_config','layout_footer','Application footer here. Go to main configuration or manage site to edit this footer.'),(1404003472,25,1,'core','main_config','buy_credit_page_title','Buy credit'),(1404003472,26,1,'core','main_config','buy_credit_page_content','Go to main configuration or manage site to edit this page'),(1404003472,27,1,'core','main_config','information_title','Information'),(1404003472,28,1,'core','main_config','information_content','Go to main configuration or manage site to edit this page');
+INSERT INTO `playsms_tblRegistry` VALUES (0,1,1,'core','config','playsms_version','1.0'),(1404003471,2,1,'core','main_config','web_title','playSMS'),(1404003471,3,1,'core','main_config','email_service','noreply@playsms.org'),(1404003471,4,1,'core','main_config','email_footer','Powered by playSMS'),(1404003471,5,1,'core','main_config','main_website_name','playSMS'),(1404003471,6,1,'core','main_config','main_website_url','http://www.playsms.org'),(1404003471,7,1,'core','main_config','gateway_number','1234'),(1404003471,8,1,'core','main_config','gateway_timezone','+0700'),(1404003471,9,1,'core','main_config','default_rate','0'),(1404003471,10,1,'core','main_config','gateway_module','dev'),(1404003471,11,1,'core','main_config','themes_module','default'),(1404003471,12,1,'core','main_config','language_module','en_US'),(1404003471,13,1,'core','main_config','sms_max_count','3'),(1404003471,14,1,'core','main_config','default_credit','0'),(1404003471,15,1,'core','main_config','enable_register','0'),(1404003471,16,1,'core','main_config','enable_forgot','1'),(0,17,1,'core','main_config','allow_custom_sender','0'),(0,18,1,'core','main_config','allow_custom_footer','0'),(1404030329,19,1,'auth','login_session','81b576f23d180b087995eb4c1bf5a3ec','{\"ip\":\"127.0.0.1\",\"last_update\":\"2014-06-29 15:25:29\",\"http_user_agent\":\"Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36\",\"sid\":\"ko3kn1romdhqu5a1rrssbnph84\",\"uid\":\"1\"}'),(1404003471,20,1,'core','main_config','default_user_status','3'),(1404003471,21,1,'core','main_config','enable_logo','1'),(1404003472,22,1,'core','main_config','logo_url','plugin/themes/common/images/playSMS_logo_full.png'),(1404003472,23,1,'core','main_config','logo_replace_title','1'),(1404003472,24,1,'core','main_config','layout_footer','Application footer here. Go to main configuration or manage site to edit this footer.'),(1404003472,25,1,'core','main_config','buy_credit_page_title','Buy credit'),(1404003472,26,1,'core','main_config','buy_credit_page_content','Go to main configuration or manage site to edit this page'),(1404003472,27,1,'core','main_config','information_title','Information'),(1404003472,28,1,'core','main_config','information_content','Go to main configuration or manage site to edit this page');
 /*!40000 ALTER TABLE `playsms_tblRegistry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1505,6 +1428,7 @@ CREATE TABLE `playsms_tblSMSOutgoing_queue` (
   `datetime_scheduled` varchar(20) NOT NULL DEFAULT '000-00-00 00:00:00',
   `datetime_update` varchar(20) NOT NULL DEFAULT '000-00-00 00:00:00',
   `flag` int(11) NOT NULL DEFAULT '0',
+  `queue_count` int(11) NOT NULL DEFAULT '0',
   `sms_count` int(11) NOT NULL DEFAULT '0',
   `uid` int(11) NOT NULL DEFAULT '0',
   `gpid` int(11) NOT NULL DEFAULT '0',
@@ -1689,20 +1613,6 @@ CREATE TABLE `playsms_featureFirewall` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
--- Indexes for dumped tables
---
-
-ALTER TABLE `playsms_featurePhonebook` ADD INDEX ( `uid` ) ;
-ALTER TABLE `playsms_featurePhonebook` ADD INDEX ( `mobile` ) ;
-
-ALTER TABLE `playsms_featurePhonebook_group` ADD INDEX ( `uid` ) ;
-ALTER TABLE `playsms_featurePhonebook_group` ADD INDEX ( `flag_sender` ) ;
-ALTER TABLE `playsms_featurePhonebook_group` ADD INDEX ( `code` ) ;
-
-ALTER TABLE `playsms_featurePhonebook_group_contacts` ADD INDEX ( `gpid` ) ;
-ALTER TABLE `playsms_featurePhonebook_group_contacts` ADD INDEX ( `pid` ) ;
-
---
 -- Table structure for table `playsms_featureSchedule`
 --
 
@@ -1816,6 +1726,17 @@ CREATE TABLE `playsms_featureStoplist` (
   `mobile` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+--
+-- INDEXES
+--
+CREATE INDEX `pid` ON `playsms_featurePhonebook_group_contacts` (`pid`) ;
+CREATE INDEX `gpid` ON `playsms_featurePhonebook_group_contacts` (`gpid`) ;
+
+CREATE INDEX `uid` on `playsms_tblSMSOutgoing` (`uid`);
+CREATE INDEX `in_uid` on `playsms_tblSMSIncoming` (`in_uid`);
+CREATE INDEX `in_uid` on `playsms_tblSMSInbox` (`in_uid`);
 
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

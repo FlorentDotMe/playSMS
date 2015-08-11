@@ -82,7 +82,7 @@ msgid "From"
 msgstr "Fra"
 
 msgid "Gateway"
-msgstr ""
+msgstr "Gateway"
 
 msgid "Inbox"
 msgstr "Indbakke"
@@ -93,8 +93,16 @@ msgstr "Nøgleord"
 msgid "Last update"
 msgstr "Sidst opdateret"
 
+#, php-format
+msgid "List of messages from %s"
+msgstr "Vis alle beskeder fra %s"
+
 msgid "List of my credit transactions"
 msgstr "Liste over mine kredit transaktioner"
+
+#, php-format
+msgid "List of queue %s"
+msgstr "Liste over køen %s"
 
 msgid "Message"
 msgstr "Besked"
@@ -177,14 +185,12 @@ msgstr "pris"
 msgid "count"
 msgstr "antal"
 
-msgid "handled"
-msgstr "håndteret"
-
 msgid "rate"
 msgstr "frekvens"
 
-msgid "unhandled"
-msgstr "ej håndteret"
-
 msgid "username"
 msgstr "brugernavn"
+
+#, php-format
+msgid "view all %d"
+msgstr "se alle %d"

@@ -18,25 +18,6 @@
  */
 defined('_SECURE_') or die('Forbidden');
 
-function phonebook_tags_clean($tags) {
-	$arr_tags = explode(' ', $tags);
-	$arr_tags = array_unique($arr_tags);
-	$tags = '';
-	foreach ($arr_tags as $tag) {
-		if ($tag) {
-			$tag = strtolower(core_sanitize_alphanumeric($tag));
-			if (strlen($tags) + strlen($tag) + 1 <= 250) {
-				$tags .= $tag . ' ';
-			} else {
-				break;
-			}
-		}
-	}
-	$tags = trim($tags);
-	
-	return $tags;
-}
-
 function phonebook_hook_phonebook_groupid2name($uid, $gpid) {
 	if ($uid && $gpid) {
 		$db_query = "SELECT name FROM " . _DB_PREF_ . "_featurePhonebook_group WHERE uid='$uid' AND id='$gpid'";
@@ -62,12 +43,13 @@ function phonebook_hook_phonebook_groupid2code($uid, $gpid) {
 		$db_query = "SELECT code FROM " . _DB_PREF_ . "_featurePhonebook_group WHERE uid='$uid' AND id='$gpid'";
 		$db_result = dba_query($db_query);
 		$db_row = dba_fetch_array($db_result);
-		$code = $db_row['code'];
+		$code = phonebook_code_clean($db_row['code']);
 	}
 	return $code;
 }
 
 function phonebook_hook_phonebook_groupcode2id($uid, $code) {
+	$code = phonebook_code_clean($code);
 	if ($uid && $code) {
 		$db_query = "SELECT id FROM " . _DB_PREF_ . "_featurePhonebook_group WHERE uid='$uid' AND code='$code'";
 		$db_result = dba_query($db_query);
@@ -256,6 +238,7 @@ function phonebook_hook_phonebook_search($uid, $keyword = "", $count = 0, $exact
 function phonebook_hook_phonebook_search_group($uid, $keyword = "", $count = 0, $exact = FALSE) {
 	$ret = array();
 	
+	$keyword = phonebook_code_clean($keyword);
 	if ($keyword) {
 		$user_mobile = user_getfieldbyuid($uid, 'mobile');
 		
@@ -386,4 +369,79 @@ function phonebook_hook_webservices_output($operation, $requests, $returns) {
 	}
 	
 	return $returns;
+}
+
+/**
+ * Sanitizing group code
+ *
+ * @param string $code        
+ * @return string Sanitized group code
+ */
+function phonebook_code_clean($code) {
+	$code = trim(preg_replace('/[^\p{L}\p{N}_\-]+/u', '', $code));
+	
+	return $code;
+}
+
+/**
+ * Sanitizing tags
+ *
+ * @param string $tags        
+ * @return string Sanitized tags
+ */
+function phonebook_tags_clean($tags) {
+	$tags = trim(preg_replace('/\s+/', ' ', $tags));
+	$arr_tags = explode(',', $tags);
+	$arr_tags = array_unique($arr_tags);
+	$tags = '';
+	foreach ($arr_tags as $tag) {
+		if ($tag) {
+			// fixme anton
+			$tag = trim(preg_replace('/[^\p{L}\p{N}_\-\s\.]+/u', '', $tag));
+			if (strlen($tags) + strlen($tag) + 1 <= 250) {
+				$tags .= $tag . ', ';
+			} else {
+				break;
+			}
+		}
+	}
+	$tags = rtrim(trim($tags), ',');
+	
+	return $tags;
+}
+
+/**
+ * Phonebook group add
+ *
+ * @param integer $uid        
+ * @param string $group_name        
+ * @param string $group_code        
+ * @return mixed returns group ID on successful add, returns FALSE on failed add, returns NULL when group code is already exists
+ */
+function phonebook_group_add($uid, $group_name, $group_code) {
+	$group_code = phonebook_code_clean($group_code);
+	
+	$db_query = "SELECT code FROM " . _DB_PREF_ . "_featurePhonebook_group WHERE uid='$uid' AND code='$group_code'";
+	$db_result = dba_query($db_query);
+	if ($db_row = dba_fetch_array($db_result)) {
+		
+		// returns NULL when group code is already exists 
+		return NULL;
+	} else {
+		$db_query = "SELECT flag_sender FROM " . _DB_PREF_ . "_featurePhonebook_group WHERE code='$group_code' AND flag_sender<>0";
+		$db_result = dba_query($db_query);
+		if ($db_row = dba_fetch_array($db_result)) {
+			$flag_sender = 0;
+		}
+		$db_query = "INSERT INTO " . _DB_PREF_ . "_featurePhonebook_group (uid,name,code,flag_sender) VALUES ('$uid','$group_name','$group_code','$flag_sender')";
+		if ($id = dba_insert_id($db_query)) {
+			
+			// returns group ID
+			return $id;
+		} else {
+			
+			// returns FALSE on failed insert
+			return FALSE;
+		}
+	}
 }

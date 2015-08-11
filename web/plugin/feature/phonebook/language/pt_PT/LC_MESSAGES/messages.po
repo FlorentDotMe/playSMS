@@ -101,7 +101,7 @@ msgstr "Telemóvel"
 msgid "Move to"
 msgstr "Mover para"
 
-msgid "Multiple entries separated by space"
+msgid "Multiple entries separated by comma"
 msgstr ""
 
 msgid "Name"
@@ -154,6 +154,10 @@ msgstr ""
 
 msgid "Tags"
 msgstr ""
+
+#, fuzzy
+msgid "Unable to add group"
+msgstr "Erro ao eliminar o grupo"
 
 msgid "Unable to delete group until the group is empty"
 msgstr "Impossível apagar grupo não está vazio"

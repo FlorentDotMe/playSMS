@@ -102,8 +102,8 @@ msgstr "Mobil"
 msgid "Move to"
 msgstr "Flyt til"
 
-msgid "Multiple entries separated by space"
-msgstr "Adskillige emner adskilt med mellemrum"
+msgid "Multiple entries separated by comma"
+msgstr ""
 
 msgid "Name"
 msgstr "Navn"
@@ -153,6 +153,10 @@ msgstr ""
 
 msgid "Tags"
 msgstr "Tags"
+
+#, fuzzy
+msgid "Unable to add group"
+msgstr "Kunne ikke slette gruppe"
 
 msgid "Unable to delete group until the group is empty"
 msgstr "Kan ikke slette gruppen før den er tom"

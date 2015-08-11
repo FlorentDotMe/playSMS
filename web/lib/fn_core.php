@@ -523,25 +523,31 @@ function core_sanitize_username($username) {
 /**
  * Sanitize to alpha-numeric only
  */
-function core_sanitize_alphanumeric($text) {
-	$text = preg_replace("/[^A-Za-z0-9]/", '', $text);
-	return $text;
+function core_sanitize_alphanumeric($string) {
+	// $text = preg_replace("/[^A-Za-z0-9]/", '', $text);
+	$string = trim(preg_replace('/[^\p{L}\p{N}]+/u', '', $string));
+	
+	return $string;
 }
 
 /**
  * Sanitize to alpha only
  */
-function core_sanitize_alpha($text) {
-	$text = preg_replace("/[^A-Za-z]/", '', $text);
-	return $text;
+function core_sanitize_alpha($string) {
+	// $text = preg_replace("/[^A-Za-z]/", '', $text);
+	$string = trim(preg_replace('/[^\p{L}]+/u', '', $string));
+	
+	return $string;
 }
 
 /**
  * Sanitize to numeric only
  */
-function core_sanitize_numeric($text) {
-	$text = preg_replace("/[^0-9]/", '', $text);
-	return $text;
+function core_sanitize_numeric($string) {
+	// $text = preg_replace("/[^0-9]/", '', $text);
+	$string = trim(preg_replace('/[^\p{N}]+/u', '', $string));
+	
+	return $string;
 }
 
 /**
@@ -732,6 +738,29 @@ function core_detect_unicode($text) {
 }
 
 /**
+ * SMS strlen() based on unicode status
+ *
+ * @param string $text        
+ * @param string $encoding        
+ * @return integer Length of text
+ */
+function core_smslen($text, $encoding = "") {
+	if (function_exists('mb_strlen') && core_detect_unicode($text)) {
+		if ($encoding = trim($encoding)) {
+			$len = mb_strlen($text, $encoding);
+		} else {
+			$len = mb_strlen($text, "UTF-8");
+		}
+	} else if (core_detect_unicode($text)) {
+		$len = strlen(utf8_decode($text));
+	} else {
+		$len = strlen($text);
+	}
+	
+	return (int) $len;
+}
+
+/**
  * Function: array_to_xml()
  * ref: http://stackoverflow.com/a/3289602 (onokazu)
  *
@@ -783,17 +812,21 @@ function core_object_to_array($data) {
  * @return string
  */
 function core_csv_format($item) {
-	if (is_array($item)) {
-		$ret = '';
-		for ($i = 0; $i < count($item); $i++) {
-			foreach ($item[$i] as $key => $val) {
-				$val = str_replace('"', "'", $val);
-				$ret .= '"' . $val . '",';
-			}
-			$ret = substr($ret, 0, -1);
-			$ret .= "\n";
+	$ret = '';
+	
+	foreach ($item as $row) {
+		
+		$entry = '';
+		foreach ($row as $field) {
+			
+			$field = str_replace('"', "'", $field);
+			$entry .= '"' . $field . '",';
 		}
+		$entry = substr($entry, 0, -1);
+		
+		$ret .= $entry . "\n";
 	}
+	
 	return $ret;
 }
 
@@ -804,30 +837,36 @@ function core_csv_format($item) {
  * @param string $fn        
  * @param string $content_type        
  * @param string $charset        
+ * @param string $content_encoding        
+ * @param string $convert_encoding_to        
  */
-function core_download($content, $fn = '', $content_type = '', $charset = '') {
+function core_download($content, $fn = '', $content_type = '', $charset = '', $content_encoding = '', $convert_encoding_to = '') {
 	$fn = ($fn ? $fn : 'download.txt');
 	$content_type = (trim($content_type) ? strtolower(trim($content_type)) : 'text/plain');
 	$charset = strtolower(trim($charset));
-	
-	// fixme anton
-	// seems to be good for Arabic, Chinese and Hebrew letters
-	// but I'm not sure if this is the right way to do it though
-	if ($content_type == 'text/csv') {
-		// $charset = 'windows-1255';
-		$charset = 'utf-8';
-	}
 	
 	ob_end_clean();
 	header('Pragma: public');
 	header('Expires: 0');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	if ($content_encoding) {
+		header('Content-Encoding: ' . $content_encoding);
+	}
 	if ($charset) {
 		header('Content-Type: ' . $content_type . '; charset=' . $charset);
 	} else {
 		header('Content-Type: ' . $content_type);
 	}
 	header('Content-Disposition: attachment; filename=' . $fn);
+	
+	if ($convert_encoding_to) {
+		if (function_exists('iconv')) {
+			$content = iconv($convert_encoding_to, $content_encoding, $content);
+		} else if (function_exists('mb_convert_encoding')) {
+			$content = mb_convert_encoding($content, $convert_encoding_to, $content_encoding);
+		}
+	}
+	
 	_p($content);
 	die();
 }
@@ -1141,10 +1180,21 @@ function core_last_post_get($key = '') {
 }
 
 /**
+ * Empty last submitted $_POST data
+ *
+ * @return boolean TRUE
+ */
+function core_last_post_empty() {
+	$_SESSION['tmp']['last_post'] = array();
+	
+	return TRUE;
+}
+
+/**
  * Include composer based packages
  */
 if (file_exists(_APPS_PATH_LIBS_ . '/composer/vendor/autoload.php')) {
-	include _APPS_PATH_LIBS_ . '/composer/vendor/autoload.php';
+	include_once _APPS_PATH_LIBS_ . '/composer/vendor/autoload.php';
 } else {
 	die(_('FATAL ERROR') . ' : ' . _('Unable to find composer files') . ' ' . _('Please run composer.phar update'));
 	exit();
@@ -1181,19 +1231,13 @@ foreach ($core_config[$pc . 'list'] as $pl) {
 	$c_fn1 = $dir . '/' . $pl . '/config.php';
 	$c_fn2 = $dir . '/' . $pl . '/fn.php';
 	if (file_exists($c_fn1) && file_exists($c_fn2)) {
-		if (function_exists('bindtextdomain') && file_exists($dir . '/' . $pl . '/language')) {
-			bindtextdomain('messages', $pl_dir . '/language/');
-			bind_textdomain_codeset('messages', 'UTF-8');
-			textdomain('messages');
-		}
-		
 		// config.php
 		include $c_fn1;
 		
 		// fn.php
-		include $c_fn2;
+		include_once $c_fn2;
 	}
 }
 
 // load shortcuts
-include $core_config['apps_path']['libs'] . "/fn_shortcuts.php";
+include_once $core_config['apps_path']['libs'] . "/fn_shortcuts.php";

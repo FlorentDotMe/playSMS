@@ -44,8 +44,8 @@ function kannel_hook_sendsms($smsc, $sms_sender, $sms_footer, $sms_to, $sms_msg,
 		$sms_sender = $plugin_config['kannel']['module_sender'];
 	}
 	
-	$sms_footer = stripslashes($sms_footer);
-	$sms_msg = stripslashes($sms_msg);
+	$sms_footer = stripslashes(htmlspecialchars_decode($sms_footer));
+	$sms_msg = stripslashes(htmlspecialchars_decode($sms_msg));
 	$ok = false;
 	$account = user_uid2username($uid);
 	$msg_type = 1;
@@ -63,18 +63,20 @@ function kannel_hook_sendsms($smsc, $sms_sender, $sms_footer, $sms_to, $sms_msg,
 	// this doesn't work properly if kannel is not on the same server with playSMS
 	// $dlr_url = $core_config['http_path']['base'] . "/plugin/gateway/kannel/dlr.php?type=%d&smslog_id=$smslog_id&uid=$uid";
 	
+
 	// prior to 0.9.5.1
 	// $dlr_url = $plugin_config['kannel']['playsms_web'] . "/plugin/gateway/kannel/dlr.php?type=%d&smslog_id=".$smslog_id."&uid=".$uid;
 	// since 0.9.5.1
 	$dlr_url = $plugin_config['kannel']['playsms_web'] . "/index.php?app=call&cat=gateway&plugin=kannel&access=dlr&type=%d&smslog_id=" . $smslog_id . "&uid=" . $uid;
 	
-	$URL = "/cgi-bin/sendsms?username=" . urlencode($plugin_config['kannel']['username']) . "&password=" . urlencode($plugin_config['kannel']['password']);
+	$URL = "/cgi-bin/sendsms?username=" . urlencode($plugin_config['kannel']['username']) . "&password=" . urlencode(htmlspecialchars_decode($plugin_config['kannel']['password']));
 	$URL .= "&from=" . urlencode($sms_sender) . "&to=" . urlencode($sms_to);
 	// Handle DLR options config (emmanuel)
 	// $URL .= "&dlr-mask=31&dlr-url=".urlencode($dlr_url);
 	$URL .= "&dlr-mask=" . $plugin_config['kannel']['dlr'] . "&dlr-url=" . urlencode($dlr_url);
 	// end of Handle DLR options config (emmanuel)
 	
+
 	if ($sms_type == 'flash') {
 		$URL .= "&mclass=" . $msg_type;
 	}
@@ -94,7 +96,7 @@ function kannel_hook_sendsms($smsc, $sms_sender, $sms_footer, $sms_to, $sms_msg,
 	$URL .= "&text=" . urlencode($sms_msg);
 	
 	// fixme anton - patch 1.4.3, dlr requries smsc-id, you should add at least smsc=<your smsc-id in kannel.conf> from web
-	if ($additional_param = $plugin_config['kannel']['additional_param']) {
+	if ($additional_param = htmlspecialchars_decode($plugin_config['kannel']['additional_param'])) {
 		$additional_param = "&" . $additional_param;
 	}
 	$URL .= $additional_param;

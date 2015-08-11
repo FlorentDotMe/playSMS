@@ -259,13 +259,22 @@ function sendsmsd($single_queue = '', $sendsmsd_limit = 0, $sendsmsd_offset = 0)
 		$c_queue_id = $db_row['id'];
 		$c_queue_code = $db_row['queue_code'];
 		$c_sender_id = addslashes(trim($db_row['sender_id']));
-		$c_footer = addslashes(trim($db_row['footer']));
-		$c_message = addslashes(trim($db_row['message']));
+		$c_footer = addslashes(trim(htmlspecialchars_decode($db_row['footer'])));
+		$c_message = addslashes(trim(htmlspecialchars_decode($db_row['message'])));
 		$c_uid = $db_row['uid'];
 		$c_gpid = $db_row['gpid'];
 		$c_sms_type = $db_row['sms_type'];
 		$c_unicode = $db_row['unicode'];
+		
+		// queue size
+		$c_queue_count = $db_row['queue_count'];
+		
+		// total number of SMS per queue
 		$c_sms_count = $db_row['sms_count'];
+		
+		// SMS count per destination
+		$c_sms_size = ceil($c_sms_count / $c_queue_count);
+		
 		$c_schedule = $db_row['datetime_scheduled'];
 		$c_smsc = $db_row['smsc'];
 		$c_current = core_get_datetime();
@@ -285,8 +294,10 @@ function sendsmsd($single_queue = '', $sendsmsd_limit = 0, $sendsmsd_offset = 0)
 		
 		// process queue
 		if ($continue) {
-			_log("start processing queue_code:" . $c_queue_code . " sms_count:" . $c_sms_count . " scheduled:" . core_display_datetime($c_schedule) . " uid:" . $c_uid . " gpid:" . $c_gpid . " sender_id:" . $c_sender_id, 2, "sendsmsd");
+			_log("start processing queue_code:" . $c_queue_code . " queue_count:" . $c_queue_count . " sms_count:" . $c_sms_count . " scheduled:" . core_display_datetime($c_schedule) . " uid:" . $c_uid . " gpid:" . $c_gpid . " sender_id:" . $c_sender_id, 2, "sendsmsd");
+			
 			$counter = 0;
+			
 			$db_query2 = "SELECT * FROM " . _DB_PREF_ . "_tblSMSOutgoing_queue_dst WHERE queue_id='$c_queue_id' AND flag='0'";
 			$db_result2 = dba_query($db_query2);
 			while ($db_row2 = dba_fetch_array($db_result2)) {
@@ -316,7 +327,7 @@ function sendsmsd($single_queue = '', $sendsmsd_limit = 0, $sendsmsd_offset = 0)
 					$c_flag = 1;
 					
 					// add to throttle counter
-					sendsms_throttle_count(0, $c_sms_count);
+					sendsms_throttle_count(0, $c_sms_size);
 				}
 				_log("result queue_code:" . $c_queue_code . " to:" . $c_dst . " flag:" . $c_flag . " smslog_id:" . $c_smslog_id, 2, "sendsmsd");
 				$db_query3 = "UPDATE " . _DB_PREF_ . "_tblSMSOutgoing_queue_dst SET flag='$c_flag' WHERE id='$c_smslog_id'";
@@ -341,7 +352,7 @@ function sendsmsd($single_queue = '', $sendsmsd_limit = 0, $sendsmsd_offset = 0)
 			$dst_processed = (int) ($db_row['count'] ? $db_row['count'] : 0);
 			
 			// number of SMS processed
-			$sms_processed = $dst_processed * $c_sms_count;
+			$sms_processed = $dst_processed * $c_sms_size;
 			
 			// check whether SMS processed is >= stated SMS count in queue
 			// if YES then processing queue is finished
@@ -349,12 +360,12 @@ function sendsmsd($single_queue = '', $sendsmsd_limit = 0, $sendsmsd_offset = 0)
 				$dt = core_get_datetime();
 				$db_query5 = "UPDATE " . _DB_PREF_ . "_tblSMSOutgoing_queue SET flag='1', datetime_update='" . $dt . "' WHERE id='$c_queue_id'";
 				if ($db_result5 = dba_affected_rows($db_query5)) {
-					_log("finish processing queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " sms_count:" . $c_sms_count, 2, "sendsmsd");
+					_log("finish processing queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " queue_count:" . $c_queue_count . " sms_count:" . $c_sms_count, 2, "sendsmsd");
 				} else {
-					_log("fail to finalize process queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " sms_processed:" . $sms_processed, 2, "sendsmsd");
+					_log("fail to finalize process queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " queue_count:" . $c_queue_count . " sms_count:" . $c_sms_count . " sms_processed:" . $sms_processed, 2, "sendsmsd");
 				}
 			} else {
-				_log("partially processing queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " sms_count:" . $c_sms_count . " sms_processed:" . $sms_processed . " counter:" . $counter, 2, "sendsmsd");
+				_log("partially processing queue_code:" . $c_queue_code . " uid:" . $c_uid . " sender_id:" . $c_sender_id . " queue_count:" . $c_queue_count . " sms_count:" . $c_sms_count . " sms_processed:" . $sms_processed . " counter:" . $counter, 2, "sendsmsd");
 			}
 		}
 	}
@@ -386,6 +397,10 @@ function sendsms_process($smslog_id, $sms_sender, $sms_footer, $sms_to, $sms_msg
 	
 
 	$sms_datetime = core_get_datetime();
+	
+	// htmlspecialchars_decode to message and footer
+	$sms_msg = htmlspecialchars_decode($sms_msg);
+	$sms_footer = htmlspecialchars_decode($sms_footer);
 	
 	// sent sms will be handled by plugins first
 	$ret_intercept = sendsms_intercept($sms_sender, $sms_footer, $sms_to, $sms_msg, $uid, $gpid, $sms_type, $unicode, $queue_code, $smsc);
@@ -562,6 +577,10 @@ function sendsms_process($smslog_id, $sms_sender, $sms_footer, $sms_to, $sms_msg
 function sendsms_helper($username, $sms_to, $message, $sms_type = 'text', $unicode = 0, $smsc = '', $nofooter = false, $sms_footer = '', $sms_sender = '', $sms_schedule = '', $reference_id = '') {
 	global $core_config, $user_config;
 	
+	// htmlspecialchars_decode to message and footer
+	$message = htmlspecialchars_decode($message);
+	$sms_footer = htmlspecialchars_decode($sms_footer);
+	
 	// get user data
 	if ($username && ($user_config['username'] != $username)) {
 		$user_config = user_getdatabyusername($username);
@@ -575,7 +594,6 @@ function sendsms_helper($username, $sms_to, $message, $sms_type = 'text', $unico
 	for ($i = 0; $i < count($sms_to); $i++) {
 		if (substr(trim($sms_to[$i]), 0, 1) == '#') {
 			if ($c_group_code = substr(trim($sms_to[$i]), 1)) {
-				
 				$list = phonebook_search_group($user_config['uid'], $c_group_code, '', TRUE);
 				$c_gpid = $list[0]['gpid'];
 				$members = phonebook_getdatabyid($c_gpid);
@@ -663,6 +681,10 @@ function sendsms_helper($username, $sms_to, $message, $sms_type = 'text', $unico
  */
 function sendsms($username, $sms_to, $message, $sms_type = 'text', $unicode = 0, $smsc = '', $nofooter = false, $sms_footer = '', $sms_sender = '', $sms_schedule = '') {
 	global $core_config, $user_config;
+	
+	// htmlspecialchars_decode to message and footer
+	$message = htmlspecialchars_decode($message);
+	$sms_footer = htmlspecialchars_decode($sms_footer);
 	
 	// get user data
 	$user = $user_config;
@@ -834,7 +856,7 @@ function sendsms($username, $sms_to, $message, $sms_type = 'text', $unicode = 0,
 		if ($continue && ($smslog_id[$i] = sendsms_queue_push($queue_code, $c_sms_to))) {
 			$ok[$i] = TRUE;
 			$queue_count++;
-			$sms_count = $sms_count + $count;
+			$sms_count += $count;
 			$error_strings[$i] = sprintf(_('Message %s has been delivered to queue'), $smslog_id[$i]);
 		} else {
 			$ok[$i] = FALSE;
@@ -849,6 +871,7 @@ function sendsms($username, $sms_to, $message, $sms_type = 'text', $unicode = 0,
 	
 	if (sendsms_queue_update($queue_code, array(
 		'flag' => '0',
+		'queue_count' => $queue_count,
 		'sms_count' => $sms_count 
 	))) {
 		_log("end queue_code:" . $queue_code . " queue_count:" . $queue_count . " sms_count:" . $sms_count . " failed_queue:" . $failed_queue_count . " failed_sms:" . $failed_sms_count, 2, "sendsms");

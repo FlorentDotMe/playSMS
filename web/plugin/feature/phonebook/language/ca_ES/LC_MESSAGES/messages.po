@@ -102,7 +102,7 @@ msgstr "Mòbil"
 msgid "Move to"
 msgstr "Moure a"
 
-msgid "Multiple entries separated by space"
+msgid "Multiple entries separated by comma"
 msgstr ""
 
 msgid "Name"
@@ -154,6 +154,10 @@ msgstr ""
 
 msgid "Tags"
 msgstr ""
+
+#, fuzzy
+msgid "Unable to add group"
+msgstr "Error esborrant grup"
 
 msgid "Unable to delete group until the group is empty"
 msgstr "No es pot esborrar el grup fins que sigui buit"

@@ -134,6 +134,7 @@ function common_hook_themes_buildmenu($menu_config) {
 
 function common_hook_themes_navbar($num, $nav, $max_nav, $url, $page) {
 	global $core_config;
+	
 	$nav_pages = "";
 	if ($num) {
 		$nav_start = ((($nav - 1) * $max_nav) + 1);
@@ -160,5 +161,6 @@ function common_hook_themes_navbar($num, $nav, $max_nav, $url, $page) {
 		$nav_pages .= "<a href='" . _u($url . '&page=' . $num . '&nav=' . $end) . "'> >> </a>";
 		$nav_pages .= "</div>";
 	}
+	
 	return $nav_pages;
 }

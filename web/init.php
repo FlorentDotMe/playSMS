@@ -129,7 +129,7 @@ define('_HTTP_PATH_STORAGE_', $core_config['http_path']['storage']);
 define('_SYSTEM_SENDER_ID_', '@admin');
 
 // load init functions
-include _APPS_PATH_LIBS_ . '/fn_core.php';
+include_once _APPS_PATH_LIBS_ . '/fn_core.php';
 
 // if magic quotes gps is set to Off (which is recommended) then addslashes all requests
 if (!get_magic_quotes_gpc()) {
@@ -247,10 +247,9 @@ $core_config['main']['max_sms_length'] = $core_config['main']['sms_max_count'] *
 $core_config['main']['max_sms_length_unicode'] = $core_config['main']['sms_max_count'] * $core_config['main']['per_sms_length_unicode'];
 
 // reserved important keywords
-$reserved_keywords = array(
+$core_config['reserved_keywords'] = array(
 	'BC' 
 );
-$core_config['reserved_keywords'] = $reserved_keywords;
 
 if (auth_isvalid()) {
 	
@@ -312,18 +311,18 @@ if (!(file_exists($fn1) && file_exists($fn2))) {
 	die(_('FATAL ERROR') . ' : ' . _('Fail to load language') . ' ' . core_lang_get());
 }
 
+if (function_exists('bindtextdomain')) {
+	bindtextdomain('messages', _APPS_PATH_STORAGE_ . '/plugin/language/');
+	bind_textdomain_codeset('messages', 'UTF-8');
+	textdomain('messages');
+}
+
 if (auth_isvalid()) {
 	
 	// set user lang
 	core_setuserlang($_SESSION['username']);
 } else {
 	core_setuserlang();
-}
-
-if (function_exists('bindtextdomain')) {
-	bindtextdomain('messages', _APPS_PATH_PLUG_ . '/language/');
-	bind_textdomain_codeset('messages', 'UTF-8');
-	textdomain('messages');
 }
 
 // fixme anton - debug

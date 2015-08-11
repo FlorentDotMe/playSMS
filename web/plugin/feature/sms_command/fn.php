@@ -2,14 +2,14 @@
 defined('_SECURE_') or die('Forbidden');
 
 /*
- * Implementations of hook checkavailablekeyword()
+ * Implementations of hook keyword_isavail()
  *
  * @param $keyword
- *   checkavailablekeyword() will insert keyword for checking to the hook here
+ *   keyword_isavail() will insert keyword for checking to the hook here
  * @return
  *   TRUE if keyword is available
  */
-function sms_command_hook_checkavailablekeyword($keyword) {
+function sms_command_hook_keyword_isavail($keyword) {
 	$ok = true;
 	$db_query = "SELECT command_id FROM "._DB_PREF_."_featureCommand WHERE command_keyword='$keyword'";
 	if ($db_result = dba_num_rows($db_query)) {
@@ -19,7 +19,7 @@ function sms_command_hook_checkavailablekeyword($keyword) {
 }
 
 /*
- * Implementations of hook setsmsincomingaction()
+ * Implementations of hook recvsms_process()
  *
  * @param $sms_datetime
  *   date and time when incoming sms inserted to playsms
@@ -34,7 +34,7 @@ function sms_command_hook_checkavailablekeyword($keyword) {
  * @return $ret
  *   array of keyword owner uid and status, TRUE if incoming sms handled
  */
-function sms_command_hook_setsmsincomingaction($sms_datetime,$sms_sender,$command_keyword,$command_param='',$sms_receiver='',$smsc='',$raw_message='') {
+function sms_command_hook_recvsms_process($sms_datetime,$sms_sender,$command_keyword,$command_param='',$sms_receiver='',$smsc='',$raw_message='') {
 	$ok = false;
 	$db_query = "SELECT uid,command_id FROM "._DB_PREF_."_featureCommand WHERE command_keyword='$command_keyword'";
 	$db_result = dba_query($db_query);

@@ -93,8 +93,16 @@ msgstr "palavra-chave"
 msgid "Last update"
 msgstr "Última atualização"
 
+#, php-format
+msgid "List of messages from %s"
+msgstr ""
+
 msgid "List of my credit transactions"
 msgstr "Lista da minhas Transações de crédito"
+
+#, php-format
+msgid "List of queue %s"
+msgstr ""
 
 msgid "Message"
 msgstr "Mensagem"
@@ -177,14 +185,12 @@ msgstr "Preço"
 msgid "count"
 msgstr "Contador"
 
-msgid "handled"
-msgstr ""
-
 msgid "rate"
 msgstr "Taxa"
 
-msgid "unhandled"
-msgstr ""
-
 msgid "username"
 msgstr "Nome de Utilizador"
+
+#, php-format
+msgid "view all %d"
+msgstr ""
